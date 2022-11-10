@@ -134,7 +134,7 @@ namespace NetworkManager
         }
     }
 
-    public class UDP : MonoBehaviour
+    public class NetworkManager : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()
@@ -142,9 +142,9 @@ namespace NetworkManager
             var server = new UDPServer();
             server.Initialize();
             server.StartMessageLoop();
-            Console.WriteLine("Server Listening!");
-
-            Console.ReadLine();
+            //Console.WriteLine("Server Listening!");
+            print("Server Listening");
+            //Console.ReadLine();
         }
 
         // Update is called once per frame
