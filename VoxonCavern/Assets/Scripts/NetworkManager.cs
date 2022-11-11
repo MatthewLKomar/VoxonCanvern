@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace NetworkManager
 {
+    //based on this:
+    // https://gist.github.com/louis-e/888d5031190408775ad130dde353e0fd
     public class UDPSocket
     {
         public Socket _socket;
@@ -14,6 +16,7 @@ namespace NetworkManager
         private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
         private AsyncCallback recv = null;
         public string output = "nothing"; 
+
         public class State
         {
             public byte[] buffer = new byte[bufSize];
