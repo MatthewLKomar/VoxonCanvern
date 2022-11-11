@@ -1,157 +1,96 @@
-using System.Collections;
-using System.Collections.Generic;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using System.Text;
 using UnityEngine;
 
 namespace NetworkManager
 {
-    public class UDPServer
+    public class UDPSocket
     {
-        public const int PORT = 5000;
-
-        private Socket _socket; 
-        private EndPoint _endPoint;
-
-        private byte[] _buffer_recv;
-        private ArraySegment<byte> _buffer_recv_segment;
-
-        public void Initialize()
+        public Socket _socket;
+        private const int bufSize = 8 * 1024;
+        private State state = new State();
+        private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
+        private AsyncCallback recv = null;
+        public string output = "nothing"; 
+        public class State
         {
-            _buffer_recv = new byte[4096];
-            _buffer_recv_segment = new(_buffer_recv);
-
-            _endPoint = new IPEndPoint(IPAddress.Any, PORT);
-
-            _socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
-
-            _socket.Bind(_endPoint);
+            public byte[] buffer = new byte[bufSize];
         }
 
-        public void StartMessageLoop()
+        public void Server(string address, int port)
         {
-            //replace this with coroutine
-            _ = Task.Run(async () =>
+            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, true);
+            _socket.Bind(new IPEndPoint(IPAddress.Parse(address), port));
+            Receive();
+        }
+
+        public void Client(string address, int port)
+        {
+            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            _socket.Connect(IPAddress.Parse(address), port);
+            Receive();
+        }
+
+        public void Send(string text)
+        {
+            byte[] data = Encoding.ASCII.GetBytes(text);
+            _socket.BeginSend(data, 0, data.Length, SocketFlags.None, (ar) =>
             {
-                SocketReceiveMessageFromResult res;
-                while (true)
-                {
-                    res = await _socket.ReceiveMessageFromAsync(_buffer_recv_segment, SocketFlags.None, _endPoint);
-                    Console.WriteLine($"Recieved message: " +
-                        $"{Encoding.UTF8.GetString(_buffer_recv,0,res.ReceivedBytes)}");
-                    await SendTo(res.RemoteEndPoint, Encoding.UTF8.GetBytes("Hello Back!"));
-                }
-            }
-            );
+                State so = (State)ar.AsyncState;
+                int bytes = _socket.EndSend(ar);
+                Console.WriteLine("SEND: {0}, {1}", bytes, text);
+            }, state);
         }
 
-        public async Task SendTo(EndPoint recipient, byte[] data)
+        private void Receive()
         {
-            var s = new ArraySegment<byte>(data);
-            await _socket.SendToAsync(s, SocketFlags.None, recipient);
-        }
-
-    }
-    public class UDPClient
-    {
-        public const int PORT = 5000;
-
-        private Socket _socket;
-        private EndPoint _endPoint;
-
-        private byte[] _buffer_recv;
-        private ArraySegment<byte> _buffer_recv_segment;
-
-        public void Initialize(IPAddress address, int port)
-        {
-            _buffer_recv = new byte[4096];
-            _buffer_recv_segment = new(_buffer_recv);
-
-            _endPoint = new IPEndPoint(address, port);
-
-            _socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
-            _socket.Connect(_endPoint);
-
-        }
-
-        public void StartMessageLoop()
-        {
-            //replace this with coroutine
-            _ = Task.Run(async () =>
+            _socket.BeginReceiveFrom(state.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv = (ar) =>
             {
-                SocketReceiveMessageFromResult res;
-                while (true)
+                try
                 {
-                    res = await _socket.ReceiveMessageFromAsync(_buffer_recv_segment, SocketFlags.None, _endPoint);
-                    Console.WriteLine($"Recieved message: " +
-                        $"{Encoding.UTF8.GetString(_buffer_recv, 0, res.ReceivedBytes)}");
+                    State so = (State)ar.AsyncState;
+                    int bytes = _socket.EndReceiveFrom(ar, ref epFrom);
+                    _socket.BeginReceiveFrom(so.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv, so);
+                    output = "RECV:" + Encoding.ASCII.GetString(so.buffer, 0, bytes);
                 }
-            }
-            );
-        }
+                catch { }
 
-        public async Task Send(byte[] data)
-        {
-            var s = new ArraySegment<byte>(data);
-            await _socket.SendToAsync(s, SocketFlags.None, _endPoint);
-        }
-
-        public void Close()
-        {
-            _socket.Close();
-        }
-    }
-
-    class program_server
-    { 
-        static void Main(string[] args)
-        {
-            var server = new UDPServer();
-            server.Initialize();
-            server.StartMessageLoop();
-            Console.WriteLine("Server Listening!");
-
-            Console.ReadLine();
-        }
-    }
-
-    class program_client
-    {
-        static async Task Main(string[] args)
-        {
-            var client = new UDPClient();
-            client.Initialize(IPAddress.Loopback, UDPServer.PORT);
-            client.StartMessageLoop();
-            await client.Send(Encoding.UTF8.GetBytes("Hello!"));
-            Console.WriteLine("Message sent");
-
-            Console.ReadLine();
+            }, state);
         }
     }
 
     public class NetworkManager : MonoBehaviour
     {
         // Start is called before the first frame update
+        UDPSocket s;
         void Start()
         {
-            var server = new UDPServer();
-            server.Initialize();
-            server.StartMessageLoop();
-            //Console.WriteLine("Server Listening!");
-            print("Server Listening");
-            //Console.ReadLine();
+            s = new UDPSocket();
+            s.Server("127.0.0.1", 27000);
+
+            UDPSocket c = new UDPSocket();
+            c.Client("127.0.0.1", 27000);
+            c.Send("TEST!");
+
+            
+            //Console.ReadKey();
+            //s._socket.Close(); //Fixed closing bug (System.ObjectDisposedException)
+                               //Bugfix allows to relaunch server
+            
         }
 
-        // Update is called once per frame
-        void Update()
+        private void Update()
         {
-
+            if (s != null)
+                print(s.output);
         }
+
+
     }
+
+
 
 }
