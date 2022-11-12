@@ -15,28 +15,34 @@ namespace NetworkManager
         private State state = new State();
         private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
         private AsyncCallback recv = null;
-        public string output = "nothing"; 
+        
+        public string ipAdress = "127.0.0.1";
+        public int port = 27000;
+
+
+        public string output = "nothing";
 
         public class State
         {
             public byte[] buffer = new byte[bufSize];
         }
 
-        public void Server(string address, int port)
+        public void Server()
         {
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, true);
-            _socket.Bind(new IPEndPoint(IPAddress.Parse(address), port));
+            _socket.Bind(new IPEndPoint(IPAddress.Parse(ipAdress), port));
             Receive();
         }
 
-        public void Client(string address, int port)
+        public void Client()
         {
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _socket.Connect(IPAddress.Parse(address), port);
+            _socket.Connect(IPAddress.Parse(ipAdress), port);
             Receive();
         }
 
+        // Transmit the data 
         public void Send(string text)
         {
             byte[] data = Encoding.ASCII.GetBytes(text);
@@ -48,6 +54,7 @@ namespace NetworkManager
             }, state);
         }
 
+        //Receive data 
         private void Receive()
         {
             _socket.BeginReceiveFrom(state.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv = (ar) =>
@@ -72,10 +79,10 @@ namespace NetworkManager
         void Start()
         {
             s = new UDPSocket();
-            s.Server("127.0.0.1", 27000);
+            s.Server();
 
             UDPSocket c = new UDPSocket();
-            c.Client("127.0.0.1", 27000);
+            c.Client();
             c.Send("TEST!");
 
             
