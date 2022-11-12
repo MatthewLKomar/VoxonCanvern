@@ -2,20 +2,54 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TransmissionType
+public enum Command
 {
     [Tooltip("A Generic Event will cause a Unity Event call to be fired when received")]
     GenericEvent,
-    [Tooltip("this will set something associate Vector3 values to the value defined in event.")]
-    Vector3Event
+    [Tooltip("Creates the object on the other end")]
+    Spawn,
+    [Tooltip("Parents an object to another one.")]
+    Parent,
+    [Tooltip("Will move a corresponding object name to an associated point.")]
+    Move,
+    [Tooltip("Will scale the object")]
+    Scale,
+    [Tooltip("Will rotate the object to a provided value")]
+    Rotate
 }
 
+[System.Serializable]
+public struct Vector3Param
+{
+    public Vector3 vector3; 
+}
+
+[System.Serializable]
+public struct QuaternionParam
+{
+    public Quaternion quaternion;
+}
+
+[System.Serializable]
+public struct AssignParam
+{
+    public string ParentObj;
+}
+
+[System.Serializable]
+public struct EventNameParam
+{
+    public string EventName;
+}
+
+[System.Serializable]
 public struct Payload
 {
     [Tooltip("Transmission Type")]
-    public TransmissionType dataType;
+    public Command command;
     [Tooltip("Who will the data be directed towards")]
-    public string Context; 
-    [Tooltip("data will be forammted dependent on the dataType")]
-    public string data;  
+    public string ObjectName; 
+    [Tooltip("Serialized JSON data and its data type will be relative to the command")]
+    public string Params;  
 }
+

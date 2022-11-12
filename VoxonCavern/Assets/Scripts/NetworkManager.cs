@@ -33,6 +33,7 @@ namespace NetworkManager
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, true);
             _socket.Bind(new IPEndPoint(IPAddress.Parse(ipAdress), port));
             Receive();
+            ObjectManager.current.ConfirmNetworkerIsRunning("Server is live!");
         }
 
         public void Client()
@@ -40,6 +41,7 @@ namespace NetworkManager
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _socket.Connect(IPAddress.Parse(ipAdress), port);
             Receive();
+            ObjectManager.current.ConfirmNetworkerIsRunning("Client is live!");
         }
 
         // Transmit the data 
@@ -50,7 +52,6 @@ namespace NetworkManager
             {
                 State so = (State)ar.AsyncState;
                 int bytes = _socket.EndSend(ar);
-                Console.WriteLine("SEND: {0}, {1}", bytes, text);
             }, state);
         }
 
@@ -64,7 +65,9 @@ namespace NetworkManager
                     State so = (State)ar.AsyncState;
                     int bytes = _socket.EndReceiveFrom(ar, ref epFrom);
                     _socket.BeginReceiveFrom(so.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv, so);
-                    output = "RECV:" + Encoding.ASCII.GetString(so.buffer, 0, bytes);
+                    output = Encoding.ASCII.GetString(so.buffer, 0, bytes);
+                    // process the json buffer received
+                    ObjectManager.current.ProcessBuffer(output);
                 }
                 catch { }
 
@@ -83,15 +86,14 @@ namespace NetworkManager
 
             UDPSocket c = new UDPSocket();
             c.Client();
-            c.Send("TEST!");
-
-            
-            //Console.ReadKey();
-            //s._socket.Close(); //Fixed closing bug (System.ObjectDisposedException)
-                               //Bugfix allows to relaunch server
-            
+            //c.Send("TEST!");
         }
 
+        private void OnDestroy()
+        {
+            s._socket.Close(); //Fixed closing bug (System.ObjectDisposedException)
+            //Bugfix allows to relaunch server
+        }
         private void Update()
         {
             if (s != null)
