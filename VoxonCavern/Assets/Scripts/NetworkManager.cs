@@ -76,62 +76,72 @@ public class UDPSocket
     }
 }
 
-public class TCPServer
+public class TCPLogic
 {
     public string ipAdress = "127.0.0.1";
     public int port = 27000;
+    public static int maxByteLength = 256;
+    public string name;
+
+}
+public class TCPServer : TCPLogic
+{
 
     TcpListener server = null;
-    public TCPServer()
+    TcpClient client = null;
+
+    //Creates the server on a new thread that is listening to any clients
+    public TCPServer(string ServerName)
     {
-        IPAddress localAddr = IPAddress.Parse(ipAdress);
-        server = new TcpListener(localAddr, port);
-        server.Start();
-        StartListener();
+        name = ServerName;
+        Thread t = new Thread(delegate ()
+        {
+            IPAddress localAddr = IPAddress.Parse(ipAdress);
+            server = new TcpListener(localAddr, port);
+            server.Start();
+            StartListener();
+        });
+        t.Start();
     }
 
     public void StartListener()
     {
         try
         {
+            NetworkManager.current.NetworkerPrint(name + " is waiting for a connection");
             while (true)
             {
-                NetworkManager.current.NetworkerPrint("Waiting for a connection...");
                 TcpClient client = server.AcceptTcpClient();
                 NetworkManager.current.NetworkerPrint("Connected!");
 
-                Thread t = new Thread(new ParameterizedThreadStart(HandleDeivce));
+                Thread t = new Thread(new ParameterizedThreadStart(ListenForData));
                 t.Start(client);
             }
         }
         catch (SocketException e)
         {
+            // something went wrong here...
             NetworkManager.current.NetworkerPrint("SocketException:" + e);
             server.Stop();
         }
     }
 
-    public void HandleDeivce(System.Object obj)
+    public void ListenForData(System.Object obj)
     {
-        TcpClient client = (TcpClient)obj;
+        client = (TcpClient)obj;
         var stream = client.GetStream();
-        string imei = String.Empty;
 
-        string data = null;
-        Byte[] bytes = new Byte[256];
+        string data;
+        Byte[] bytes = new Byte[maxByteLength];
         int i;
         try
         {
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
-                string hex = BitConverter.ToString(bytes);
                 data = Encoding.ASCII.GetString(bytes, 0, i);
                 NetworkManager.current.NetworkerPrint("Received: " + data);
-
-                string str = "Hey Device!";
-                Byte[] reply = System.Text.Encoding.ASCII.GetBytes(str);
-                stream.Write(reply, 0, reply.Length);
-                NetworkManager.current.NetworkerPrint("Sent: " + str);
+                if (data != "Confirm")
+                    ObjectManager.current.ProcessBuffer(data);
             }
         }
         catch (Exception e)
@@ -140,69 +150,101 @@ public class TCPServer
             client.Close();
         }
     }
-}
-public class TCPSClient
-{
-    public string ipAdress = "127.0.0.1";
-    public int port = 27000;
 
-    public void Test()
+    public bool Send(string message)
     {
-        new Thread(() =>
+        if (client != null)
         {
-            Thread.CurrentThread.IsBackground = true;
-            Connect(ipAdress, "Hello I'm Device 1...");
-        }).Start();
-
-        new Thread(() =>
-        {
-            Thread.CurrentThread.IsBackground = true;
-            Connect(ipAdress, "Hello I'm Device 2...");
-        }).Start();
-
-
-        Console.ReadLine();
+            var stream = client.GetStream();
+            //Send response to client here... 
+            Byte[] reply = Encoding.ASCII.GetBytes(message);
+            stream.Write(reply, 0, reply.Length);
+            NetworkManager.current.NetworkerPrint("Sent: " + message);
+            return true;
+        }
+        return false;
     }
 
-    void Connect(String server, String message)
+}
+public class TCPClient : TCPLogic
+{
+    TcpClient client;
+    public TCPClient(string clientName)
+    {
+        name = clientName;
+        new Thread(() =>
+        {
+            Thread.CurrentThread.IsBackground = true;
+            client = new TcpClient(ipAdress, port);
+            StartListener();
+        }).Start();
+    }
+
+    void StartListener()
     {
         try
         {
-            TcpClient client = new TcpClient(server, port);
-
-            NetworkStream stream = client.GetStream();
-
-            int count = 0;
-            while (count++ < 3)
+            while(true)
             {
-                // Translate the Message into ASCII.
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
-
-                // Send the message to the connected TcpServer. 
-                stream.Write(data, 0, data.Length);
-                Console.WriteLine("Sent: {0}", message);
-
-                // Bytes Array to receive Server Response.
-                data = new Byte[256];
-                String response = String.Empty;
-
-                // Read the Tcp Server Response Bytes.
-                Int32 bytes = stream.Read(data, 0, data.Length);
-                response = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine("Received: {0}", response);
-
-                Thread.Sleep(2000);
+                Thread t = new Thread(new ParameterizedThreadStart(ListenForData));
+                t.Start();
             }
-
-            stream.Close();
-            client.Close();
         }
         catch (Exception e)
         {
-            Console.WriteLine("Exception: {0}", e);
+            NetworkManager.current.NetworkerPrint("Connect Exception: " + e);
+        }
+    }
+
+    public void ListenForData(System.Object obj)
+    {
+        // Bytes Array to receive Server Response.
+        try
+        {
+            NetworkStream stream = client.GetStream();
+            Byte[] data = new Byte[maxByteLength];
+            String response = String.Empty;
+
+            //Read the Tcp Server Response Bytes.
+            Int32 bytes = stream.Read(data, 0, data.Length);
+            response = Encoding.ASCII.GetString(data, 0, bytes);
+            NetworkManager.current.NetworkerPrint(name + " Received: " + response);
+            if (response != "connected")
+                ObjectManager.current.ProcessBuffer(response);
+        }
+        catch ( Exception e)
+        {
+            NetworkManager.current.NetworkerPrint("Exception: " + e.ToString());
+            client.Close();
         }
 
-        Console.Read();
+    }
+
+    public void Send(string message)
+    {
+        try
+        {
+            NetworkStream stream = client.GetStream();
+            // Translate the Message into ASCII.
+            Byte[] data = Encoding.ASCII.GetBytes(message);
+
+            // Send the message to the connected TcpServer. 
+            stream.Write(data, 0, data.Length);
+            NetworkManager.current.NetworkerPrint("Client Sent: " + message);
+
+            stream.Close();
+        }
+        catch (Exception e)
+        {
+            NetworkManager.current.NetworkerPrint("Send Exception: " + e);
+            Close();
+        }
+        
+    }
+
+    void Close()
+    {
+        client.Close();
     }
 }
 
@@ -210,9 +252,9 @@ public class NetworkManager : MonoBehaviour
 {
     public static NetworkManager current;
 
-    public bool isClient = true; 
-    UDPSocket server;
-    UDPSocket client;
+    public bool isClient = false;
+    TCPServer server;
+    TCPClient client;
 
     public void Awake()
     {
@@ -239,22 +281,8 @@ public class NetworkManager : MonoBehaviour
 
     void Start()
     {
-        /*        server = new UDPSocket();
-                server.Server();
-
-                client = new UDPSocket();
-                client.Client();*/
-        //c.Send("TEST!");
-        Thread t = new Thread(delegate ()
-        {
-            // replace the IP with your system IP Address...
-            TCPServer myserver = new TCPServer();
-
-        });
-        t.Start();
-
-        TCPSClient tCPSClient = new TCPSClient();
-        tCPSClient.Test();
+        server = new TCPServer("Voxon");
+        client = new TCPClient("Cavern");
     }
 
     private void OnDestroy()

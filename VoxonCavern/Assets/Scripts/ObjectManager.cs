@@ -42,7 +42,9 @@ public class ObjectManager : MonoBehaviour
     void TraverseHeirarchy(Transform root)
     {
         TrackedObjects.Add(root.name, root.gameObject);
+        
         SendInitialData(root.gameObject);
+        
         for (int i = 0; i < root.transform.childCount; i++)
         {
             TraverseHeirarchy(root.transform.GetChild(i));
