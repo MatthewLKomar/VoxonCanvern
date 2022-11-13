@@ -29,7 +29,7 @@ public class VoxonTextController : MonoBehaviour
             {
 				text.text = "Hacked!";					// Password matched.
 				isHacked = true;
-				//text.forceUpdatePerFrame = false;
+				GameEvents.instance.EveSetActiveCube();
 			}
             else
             {

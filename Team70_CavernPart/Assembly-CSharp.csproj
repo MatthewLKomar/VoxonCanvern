@@ -69,6 +69,9 @@
     <Compile Include="Assets\Cavern\Scripts\Temp Test Stuff\RockBackAndForth.cs" />
     <Compile Include="Assets\Cavern\Scripts\Temp Test Stuff\RotateInPlace.cs" />
     <Compile Include="Assets\Cavern\Scripts\Utils\PositionConstraint.cs" />
+    <Compile Include="Assets\Scripts\Artworks.cs" />
+    <Compile Include="Assets\Scripts\CGameManager.cs" />
+    <Compile Include="Assets\Scripts\ComputerController.cs" />
     <Compile Include="Assets\URP Default\Scripts\SimpleCameraController.cs" />
     <Compile Include="Assets\URP Default\TutorialInfo\Scripts\Readme.cs" />
   </ItemGroup>

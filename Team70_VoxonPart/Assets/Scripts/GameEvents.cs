@@ -29,4 +29,15 @@ public class GameEvents : MonoBehaviour
             onUpdatePos(id, newPos);
         }
     }
+
+
+    public event Action onSetActiveCube;
+
+    public void EveSetActiveCube()
+    {
+        if(onSetActiveCube != null)
+        {
+            onSetActiveCube();
+        }
+    }
 }
