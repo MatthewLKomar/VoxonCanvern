@@ -51,5 +51,7 @@ public struct Payload
     public string ObjectName; 
     [Tooltip("Serialized JSON data and its data type will be relative to the command")]
     public string Params;  
+
+
 }
 

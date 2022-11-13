@@ -7,42 +7,74 @@ public class ObjectManager : MonoBehaviour
 {
     public static ObjectManager current;
 
+    [Tooltip("Objects here will be replicated")]
+    public List<GameObject> ObjectsToReplicate = new List<GameObject>();
+
     [HideInInspector, Tooltip("these are our tracked objects in the gameworld that will replicate across clients")]
     public Dictionary<string, GameObject> TrackedObjects = new Dictionary<string, GameObject>();
 
+    public void Awake()
+    {
+        //makes this game object a publicly visible object 
+        if (current == null)
+        {
+            current = this;
+        }
+        else Destroy(gameObject);
+    }
     public void ConfirmNetworkerIsRunning(string text)
     {
         print(text);
     }
-    //validation that our Json systems are working. 
-    void Start()
+
+    void SendInitialData(GameObject obj)
     {
-        var payload = new Payload();
-        payload.command = Command.Parent;
-        payload.ObjectName = "TestObj";
+        //spawn
+        NetworkManager.current.Send(BuildBufferSpawn(Command.Spawn, obj));
+        //move
+        //NetworkManager.current.Send(BuildBufferVector3(Command.Move, obj, obj.transform.position));
+        //rotate
+        //NetworkManager.current.Send(BuildBufferRotation(Command.Rotate, obj, obj.transform.rotation));
+        //scale
+        //NetworkManager.current.Send(BuildBufferVector3(Command.Scale, obj, obj.transform.localScale));
+    }
 
-        var asignee = new AssignParam();
-        asignee.ParentObj = "ParentObj";
-        payload.Params = ParamsToJson(payload.command,asignee);
+    void TraverseHeirarchy(Transform root)
+    {
+        TrackedObjects.Add(root.name, root.gameObject);
+        SendInitialData(root.gameObject);
+        for (int i = 0; i < root.transform.childCount; i++)
+        {
+            TraverseHeirarchy(root.transform.GetChild(i));
+        }
+    }
 
-        string json = JsonUtility.ToJson(payload);
-        print(json);
-        var test = JsonUtility.FromJson<Payload>(json);
-        print("test");
-        
-        // JSON format
-        /*{ 
-            * "Items":[
-            * { "command":1,
-            *   "ObjectName":"Test",
-            *   "Params":"empty"}
-            * ]
-        * }*/
+    IEnumerator InitializeTrackedObjs()
+    {
+        foreach (var obj in ObjectsToReplicate)
+        {
+            TraverseHeirarchy(obj.transform);
+        }
+        yield return null;
+    }
+
+    IEnumerator TrackAllObjects(float SecondsToWait, GameObject toDisable)
+    {
+
+        //yield return new WaitForSeconds(SecondsToWait);
+        //not yet implemented
+        yield return null;
+    }
+    
+    private void Start()
+    {
+        StartCoroutine(InitializeTrackedObjs());
     }
 
     public void ProcessBuffer(string json)
     {
         Payload buffer = JsonUtility.FromJson<Payload>(json);
+        print(buffer.command);
         switch (buffer.command)
         {
             case Command.GenericEvent:
@@ -74,7 +106,9 @@ public class ObjectManager : MonoBehaviour
 
     void Spawn(string ObjName)
     {
-        TrackedObjects.Add(ObjName, new GameObject(ObjName));
+        print("spwaning");
+        var objToSpawn = new GameObject();
+        TrackedObjects.Add(ObjName, objToSpawn);
     }
 
     void TrackExistingItem(GameObject obj)
@@ -113,47 +147,78 @@ public class ObjectManager : MonoBehaviour
         print("TODO: Implement Call Generic Event");
     }
 
-    string ParamsToJson<T>(Command command, T data)
+    Payload CreateEmptyPayload(Command command, GameObject obj)
     {
-        string returnJson = ""; 
-
-        switch (command)
-        {
-            case Command.GenericEvent:
-                //I'm doing some really jank casting here with generic types, is this bad? 
-                returnJson =  JsonUtility.ToJson(
-                    (EventNameParam)Convert.ChangeType(data, typeof(EventNameParam))
-                );
-                break;
-            case Command.Spawn:
-                //no params needed to spawn
-                returnJson = "";
-                break;
-            case Command.Parent:
-                returnJson = JsonUtility.ToJson(
-                    (AssignParam)Convert.ChangeType(data, typeof(AssignParam))
-                );
-                break;
-            case Command.Move:
-            case Command.Scale:
-                // these two cases are combined
-                returnJson = JsonUtility.ToJson(
-                    (Vector3Param)Convert.ChangeType(data, typeof(Vector3Param))
-                );
-                break;
-            case Command.Rotate:
-                returnJson = JsonUtility.ToJson(
-                    (QuaternionParam)Convert.ChangeType(data, typeof(QuaternionParam))
-                );
-                break;
-            default:
-                //WE SHOULD NEVER GET HERE
-                returnJson = "";
-                break;
-        }
-        return returnJson;
+        var payload = new Payload();
+        payload.command = command;
+        payload.ObjectName = obj.name;
+        return payload;
     }
 
-    
+    [Tooltip("Create the JSON buffer to send to the network")]
+    string BuildBufferForGenericEvent(Command command, GameObject obj, string Event)
+    {
+        var payload = CreateEmptyPayload(command, obj);
+        payload.Params = GenericEventToJson(Event);
+        return JsonUtility.ToJson(payload);
+    }
+
+    string BuildBufferVector3(Command command, GameObject obj, Vector3 Event)
+    {
+        var payload = CreateEmptyPayload(command, obj);
+        payload.Params = Vector3ToJson(Event);
+        return JsonUtility.ToJson(payload);
+    }
+
+    string BuildBufferSpawn(Command command, GameObject obj)
+    {
+        var payload = CreateEmptyPayload(command, obj);
+        payload.Params = "";
+        return JsonUtility.ToJson(payload);
+    }
+
+    string BuildBufferRotation(Command command, GameObject obj, Quaternion Event)
+    {
+        var payload = CreateEmptyPayload(command, obj);
+        payload.Params = RotateToJson(Event);
+        return JsonUtility.ToJson(payload);
+    }
+
+    string BuildBufferParent(Command command, GameObject obj, string Event)
+    {
+        var payload = CreateEmptyPayload(command, obj);
+        payload.Params = ParentToJson(Event);
+        return JsonUtility.ToJson(payload);
+    }
+
+
+
+    string GenericEventToJson(string Event)
+    {
+        var GenericEvent = new EventNameParam();
+        GenericEvent.EventName = Event;
+        return JsonUtility.ToJson(GenericEvent);
+    }
+
+    string Vector3ToJson(Vector3 v3)
+    {
+        var vector3Param = new Vector3Param();
+        vector3Param.vector3 = v3;
+        return JsonUtility.ToJson(vector3Param);
+    }
+
+    string RotateToJson(Quaternion rotator)
+    {
+        var quaternionParam = new QuaternionParam();
+        quaternionParam.quaternion = rotator;
+        return JsonUtility.ToJson(quaternionParam);
+    }
+
+    string ParentToJson(string assigned)
+    {
+        var parenting = new AssignParam();
+        parenting.ParentObj = assigned; 
+        return JsonUtility.ToJson(parenting);
+    }
 
 }
