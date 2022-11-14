@@ -20,6 +20,8 @@ public class CaveControls : MonoBehaviour
     [Tooltip("How many degrees does the cylinder revolve?")]
     public float angle = 270;
 
+    public float test = 1;
+
     // Singleton pattern
     public static CaveControls singleton { get; private set; }
 

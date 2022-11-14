@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ComputerController : MonoBehaviour
 {
@@ -8,13 +9,17 @@ public class ComputerController : MonoBehaviour
 
     private bool isStart = false;
 
-    private string currInput = "";
-    private char[] decodeKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();            // Use this to find which key is pressed and whether is a letter.
+    public bool findMatch = false;
+
+    [SerializeField] string currInput = "";
+    [SerializeField] TextMeshPro inputUI;
+
+    private char[] decodeKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();            // Use this to find which key is pressed and whether is a letter.
 
 
     private void Awake()
     {
-        if (instance != null && instance || this)
+        if (instance != null && instance != this)
         {
             Destroy(this);
         }
@@ -44,17 +49,40 @@ public class ComputerController : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) || currInput.Length > 5)
+        if (Input.GetKeyDown(KeyCode.Return) || currInput.Length > 4)
         {
+            GameEvents.instance.EveCheckPassword(currInput);
+
+            currInput = "";
+
+            if (findMatch)
+            {
+                inputUI.text = "Correct Password";
+            }
+            else
+            {
+                inputUI.text = "Wrong Password: ";
+            }
+            findMatch = false;
             // TODO: Compare password with current one.
         }
         else
         {
             foreach (char charK in decodeKey)               
             {
-                if (Input.GetKeyDown(charK.ToString()))         // If it is a letter or a number.
+                KeyCode newkeyCode = (KeyCode)System.Enum.Parse(typeof(KeyCode), charK.ToString());
+                if (Input.GetKeyDown(newkeyCode))         // If it is a letter or a number.
                 {
                     currInput += charK.ToString();              // Add it to the bottom.
+
+                    if(inputUI.text[0] == 'E')
+                    {
+                        inputUI.text += charK;
+                    }
+                    else
+                    {
+                        inputUI.text = "Enter Password: " + charK;
+                    }
                     break;
                 }
             }
@@ -64,6 +92,11 @@ public class ComputerController : MonoBehaviour
     public void SetStartPC(bool newStatus)
     {
         isStart = newStatus;
+
+        if (newStatus)
+        {
+            inputUI.text = "Enter Password: ";
+        }
     }
 
 }
