@@ -5,78 +5,9 @@ using System.Threading;
 
 using System.Text;
 using UnityEngine;
+using System.Threading.Tasks;
 
-
-//based on this:
-// https://gist.github.com/louis-e/888d5031190408775ad130dde353e0fd
-public class UDPSocket
-{
-    public Socket _socket;
-    private const int bufSize = 120 * 1024;
-    private State state = new State();
-    private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
-    private AsyncCallback recv = null;
-        
-    public string ipAdress = "127.0.0.1";
-    public int port = 27000;
-
-
-    public string output = "nothing";
-
-    public class State
-    {
-        public byte[] buffer = new byte[bufSize];
-    }
-
-    public void Server()
-    {
-        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, true);
-        _socket.Bind(new IPEndPoint(IPAddress.Parse(ipAdress), port));
-        Receive();
-        NetworkManager.current.NetworkerPrint("Server is live!");
-    }
-
-    public void Client()
-    {
-        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        _socket.Connect(IPAddress.Parse(ipAdress), port);
-        Receive();
-        NetworkManager.current.NetworkerPrint("Client is live!");
-    }
-
-    // Transmit the data 
-    public void Send(string text)
-    {
-        byte[] data = Encoding.ASCII.GetBytes(text);
-        _socket.BeginSend(data, 0, data.Length, SocketFlags.None, (ar) =>
-        {
-            State so = (State)ar.AsyncState;
-            int bytes = _socket.EndSend(ar);
-        }, state);
-    }
-
-    //Receive data 
-    private void Receive()
-    {
-        _socket.BeginReceiveFrom(state.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv = (ar) =>
-        {
-            try
-            {
-                State so = (State)ar.AsyncState;
-                int bytes = _socket.EndReceiveFrom(ar, ref epFrom);
-                _socket.BeginReceiveFrom(so.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv, so);
-                output = Encoding.ASCII.GetString(so.buffer, 0, bytes);
-                // process the json buffer received
-                ObjectManager.current.ProcessBuffer(output);
-            }
-            catch { }
-
-        }, state);
-    }
-}
-
-public class TCPLogic
+public class TCPBase
 {
     public string ipAdress = "127.0.0.1";
     public int port = 27000;
@@ -84,7 +15,7 @@ public class TCPLogic
     public string name;
 
 }
-public class TCPServer : TCPLogic
+public class TCPServer : TCPBase
 {
 
     TcpListener server = null;
@@ -142,12 +73,12 @@ public class TCPServer : TCPLogic
                 NetworkManager.current.NetworkerPrint("Received: " + data);
                 if (data != "Confirm")
                     ObjectManager.current.ProcessBuffer(data);
+                Send("Server has recieved your confirm!");
             }
         }
         catch (Exception e)
         {
             NetworkManager.current.NetworkerPrint("Exception: "+ e.ToString());
-            client.Close();
         }
     }
 
@@ -166,7 +97,7 @@ public class TCPServer : TCPLogic
     }
 
 }
-public class TCPClient : TCPLogic
+public class TCPClient : TCPBase
 {
     TcpClient client;
     public TCPClient(string clientName)
@@ -176,10 +107,42 @@ public class TCPClient : TCPLogic
         {
             Thread.CurrentThread.IsBackground = true;
             client = new TcpClient(ipAdress, port);
-            StartListener();
+            var result = Listen();
+            Send("Confirm");
+
         }).Start();
     }
 
+    async Task Listen()
+    {
+        try
+        {
+            await client.ConnectAsync(ipAdress, port); // IP, port number
+
+            if (client.Connected)
+            {
+                NetworkStream stream = client.GetStream();
+
+                while (client.Connected)
+                {
+                    NetworkManager.current.NetworkerPrint("waiting for response");
+                    byte[] buffer = new byte[maxByteLength];
+                    int read = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    if (read > 0)
+                    {
+                        string response = Encoding.ASCII.GetString(buffer, 0, read);
+                        NetworkManager.current.NetworkerPrint(name + " Received: " + response);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            NetworkManager.current.NetworkerPrint("Client listening err:" + ex);
+            client.Close();
+        }
+    }
+/*
     void StartListener()
     {
         try
@@ -218,7 +181,7 @@ public class TCPClient : TCPLogic
             client.Close();
         }
 
-    }
+    }*/
 
     public void Send(string message)
     {
@@ -232,20 +195,14 @@ public class TCPClient : TCPLogic
             stream.Write(data, 0, data.Length);
             NetworkManager.current.NetworkerPrint("Client Sent: " + message);
 
-            stream.Close();
         }
         catch (Exception e)
         {
             NetworkManager.current.NetworkerPrint("Send Exception: " + e);
-            Close();
         }
         
     }
 
-    void Close()
-    {
-        client.Close();
-    }
 }
 
 public class NetworkManager : MonoBehaviour
