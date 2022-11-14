@@ -6,6 +6,7 @@ using UnityEngine;
 public class ObjectManager : MonoBehaviour
 {
     public static ObjectManager current;
+    public NetworkManager networker; 
     public bool start = false;
     [Tooltip("Objects here will be replicated")]
     public List<GameObject> ObjectsToReplicate = new List<GameObject>();
@@ -31,13 +32,13 @@ public class ObjectManager : MonoBehaviour
     {
         //spawn
         var buffer = BuildBufferSpawn(Command.Spawn, obj);
-        NetworkManager.current.Send(buffer);
+        networker.Send(buffer);
         //move
-        NetworkManager.current.Send(BuildBufferVector3(Command.Move, obj, obj.transform.position));
+        networker.Send(BuildBufferVector3(Command.Move, obj, obj.transform.position));
         //rotate
-        NetworkManager.current.Send(BuildBufferRotation(Command.Rotate, obj, obj.transform.rotation));
+        networker.Send(BuildBufferRotation(Command.Rotate, obj, obj.transform.rotation));
         //scale
-        NetworkManager.current.Send(BuildBufferVector3(Command.Scale, obj, obj.transform.localScale));
+        networker.Send(BuildBufferVector3(Command.Scale, obj, obj.transform.localScale));
     }
 
     void TraverseHeirarchy(Transform root)
