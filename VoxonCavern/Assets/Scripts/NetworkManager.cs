@@ -70,10 +70,9 @@ public class TCPServer : TCPBase
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
                 data = Encoding.ASCII.GetString(bytes, 0, i);
-                NetworkManager.current.NetworkerPrint("Received: " + data);
+                NetworkManager.current.NetworkerPrint(name + " Received: " + data);
                 if (data != "Confirm")
                     ObjectManager.current.ProcessBuffer(data);
-                Send("Server has recieved your confirm!");
             }
         }
         catch (Exception e)
@@ -117,7 +116,6 @@ public class TCPClient : TCPBase
     {
         try
         {
-            await client.ConnectAsync(ipAdress, port); // IP, port number
 
             if (client.Connected)
             {
@@ -142,46 +140,6 @@ public class TCPClient : TCPBase
             client.Close();
         }
     }
-/*
-    void StartListener()
-    {
-        try
-        {
-            while(true)
-            {
-                Thread t = new Thread(new ParameterizedThreadStart(ListenForData));
-                t.Start();
-            }
-        }
-        catch (Exception e)
-        {
-            NetworkManager.current.NetworkerPrint("Connect Exception: " + e);
-        }
-    }
-
-    public void ListenForData(System.Object obj)
-    {
-        // Bytes Array to receive Server Response.
-        try
-        {
-            NetworkStream stream = client.GetStream();
-            Byte[] data = new Byte[maxByteLength];
-            String response = String.Empty;
-
-            //Read the Tcp Server Response Bytes.
-            Int32 bytes = stream.Read(data, 0, data.Length);
-            response = Encoding.ASCII.GetString(data, 0, bytes);
-            NetworkManager.current.NetworkerPrint(name + " Received: " + response);
-            if (response != "connected")
-                ObjectManager.current.ProcessBuffer(response);
-        }
-        catch ( Exception e)
-        {
-            NetworkManager.current.NetworkerPrint("Exception: " + e.ToString());
-            client.Close();
-        }
-
-    }*/
 
     public void Send(string message)
     {
@@ -221,6 +179,9 @@ public class NetworkManager : MonoBehaviour
             current = this;
         }
         else Destroy(gameObject);
+
+        server = new TCPServer("Voxon");
+        client = new TCPClient("Cavern");
     }
 
     public void NetworkerPrint(string text)
@@ -236,17 +197,7 @@ public class NetworkManager : MonoBehaviour
         else server.Send(text);
     }
 
-    void Start()
-    {
-        server = new TCPServer("Voxon");
-        client = new TCPClient("Cavern");
-    }
 
-    private void OnDestroy()
-    {
-        //server._socket.Close(); //Fixed closing bug (System.ObjectDisposedException)
-        //Bugfix allows to relaunch server
-    }
 
 }
 
