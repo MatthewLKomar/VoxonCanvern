@@ -2,6 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class TCPBase : MonoBehaviour
+{
+    public string ipAdress = "127.0.0.1";
+    public int port = 27000;
+    public static int maxByteLength = 1024;
+    public string Name;
+
+    public void NetworkerPrint(string text)
+    {
+        print(text);
+    }
+}
+
 public enum Command
 {
     [Tooltip("A Generic Event will cause a Unity Event call to be fired when received")]

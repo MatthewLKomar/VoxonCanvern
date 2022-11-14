@@ -1,0 +1,77 @@
+using System;
+using System.Net.Sockets;
+using System.Threading;
+
+using System.Text;
+using System.Threading.Tasks;
+public class TCPClient : TCPBase
+{
+    TcpClient client;
+    public TCPClient(string clientName)
+    {
+        Name = clientName;
+        new Thread(() =>
+        {
+            try
+            {
+                Thread.CurrentThread.IsBackground = true;
+                client = new TcpClient(ipAdress, port);
+                var result = Listen();
+            }
+            catch (Exception ex)
+            {
+                NetworkerPrint("error loading the client: " + ex.ToString());
+            }
+
+        }).Start();
+    }
+
+    async Task Listen()
+    {
+        try
+        {
+            if (client.Connected)
+            {
+                NetworkStream stream = client.GetStream();
+
+                while (client.Connected)
+                {
+                    NetworkerPrint("waiting for response");
+                    byte[] buffer = new byte[maxByteLength];
+                    int read = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    if (read > 0)
+                    {
+                        string response = Encoding.ASCII.GetString(buffer, 0, read);
+                        NetworkerPrint(Name + " Received: " + response);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            NetworkerPrint("Client listening err:" + ex);
+            client.Close();
+        }
+    }
+
+    public void Send(string message)
+    {
+        try
+        {
+            NetworkStream stream = client.GetStream();
+            // Translate the Message into ASCII.
+            Byte[] data = Encoding.ASCII.GetBytes(message);
+
+            // Send the message to the connected TcpServer. 
+            stream.Write(data, 0, data.Length);
+            NetworkerPrint(Name + " sent: " + message);
+
+        }
+        catch (Exception e)
+        {
+            NetworkerPrint("Send Exception: " + e);
+        }
+
+    }
+
+}
