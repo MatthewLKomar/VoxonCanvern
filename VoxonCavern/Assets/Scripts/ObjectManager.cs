@@ -6,7 +6,7 @@ using UnityEngine;
 public class ObjectManager : MonoBehaviour
 {
     public static ObjectManager current;
-
+    public bool start = false;
     [Tooltip("Objects here will be replicated")]
     public List<GameObject> ObjectsToReplicate = new List<GameObject>();
 
@@ -33,11 +33,11 @@ public class ObjectManager : MonoBehaviour
         var buffer = BuildBufferSpawn(Command.Spawn, obj);
         NetworkManager.current.Send(buffer);
         //move
-        //NetworkManager.current.Send(BuildBufferVector3(Command.Move, obj, obj.transform.position));
+        NetworkManager.current.Send(BuildBufferVector3(Command.Move, obj, obj.transform.position));
         //rotate
-        //NetworkManager.current.Send(BuildBufferRotation(Command.Rotate, obj, obj.transform.rotation));
+        NetworkManager.current.Send(BuildBufferRotation(Command.Rotate, obj, obj.transform.rotation));
         //scale
-        //NetworkManager.current.Send(BuildBufferVector3(Command.Scale, obj, obj.transform.localScale));
+        NetworkManager.current.Send(BuildBufferVector3(Command.Scale, obj, obj.transform.localScale));
     }
 
     void TraverseHeirarchy(Transform root)
@@ -69,9 +69,13 @@ public class ObjectManager : MonoBehaviour
         yield return null;
     }
     
-    private void Start()
+    private void Update()
     {
-        StartCoroutine(InitializeTrackedObjs());
+        if (start)
+        {
+            StartCoroutine(InitializeTrackedObjs());
+            start = false;
+        }
     }
 
     public void ProcessBuffer(string json)
@@ -109,8 +113,13 @@ public class ObjectManager : MonoBehaviour
 
     void Spawn(string ObjName)
     {
+
+        //bool objExist = TrackedObjects.TryGetValue(ObjName, out var objToSpawn);
+            
         var objToSpawn = new GameObject();
-        TrackedObjects.Add(ObjName, objToSpawn);
+        objToSpawn.name = ObjName;
+
+        TrackedObjects.Add(objToSpawn.name, objToSpawn);
     }
 
     void TrackExistingItem(GameObject obj)

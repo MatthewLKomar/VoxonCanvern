@@ -6,13 +6,14 @@ using System.Threading;
 using System.Text;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Collections;
 
-public class TCPBase
+public class TCPBase : MonoBehaviour
 {
     public string ipAdress = "127.0.0.1";
     public int port = 27000;
     public static int maxByteLength = 256;
-    public string name;
+    public string Name;
 
 }
 public class TCPServer : TCPBase
@@ -22,9 +23,10 @@ public class TCPServer : TCPBase
     TcpClient client = null;
 
     //Creates the server on a new thread that is listening to any clients
+
     public TCPServer(string ServerName)
     {
-        name = ServerName;
+        Name = ServerName;
         Thread t = new Thread(delegate ()
         {
             IPAddress localAddr = IPAddress.Parse(ipAdress);
@@ -39,7 +41,7 @@ public class TCPServer : TCPBase
     {
         try
         {
-            NetworkManager.current.NetworkerPrint(name + " is waiting for a connection");
+            NetworkManager.current.NetworkerPrint(Name + " is waiting for a connection");
             while (true)
             {
                 TcpClient client = server.AcceptTcpClient();
@@ -57,6 +59,13 @@ public class TCPServer : TCPBase
         }
     }
 
+
+    public IEnumerator ProcessBuffer(string data)
+    {
+        ObjectManager.current.ProcessBuffer(data);
+        yield return null;
+    }
+
     public void ListenForData(System.Object obj)
     {
         client = (TcpClient)obj;
@@ -70,9 +79,10 @@ public class TCPServer : TCPBase
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
                 data = Encoding.ASCII.GetString(bytes, 0, i);
-                NetworkManager.current.NetworkerPrint(name + " Received: " + data);
+                NetworkManager.current.NetworkerPrint(Name + " Received: " + data);
                 if (data != "Confirm")
-                    ObjectManager.current.ProcessBuffer(data);
+                    UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
+                //ObjectManager.current.ProcessBuffer(data);
             }
         }
         catch (Exception e)
@@ -89,7 +99,7 @@ public class TCPServer : TCPBase
             //Send response to client here... 
             Byte[] reply = Encoding.ASCII.GetBytes(message);
             stream.Write(reply, 0, reply.Length);
-            NetworkManager.current.NetworkerPrint(name + " Sent: " + message);
+            NetworkManager.current.NetworkerPrint(Name + " Sent: " + message);
             return true;
         }
         return false;
@@ -101,14 +111,12 @@ public class TCPClient : TCPBase
     TcpClient client;
     public TCPClient(string clientName)
     {
-        name = clientName;
+        Name = clientName;
         new Thread(() =>
         {
             Thread.CurrentThread.IsBackground = true;
             client = new TcpClient(ipAdress, port);
             var result = Listen();
-            Send("Confirm");
-
         }).Start();
     }
 
@@ -116,7 +124,6 @@ public class TCPClient : TCPBase
     {
         try
         {
-
             if (client.Connected)
             {
                 NetworkStream stream = client.GetStream();
@@ -129,7 +136,7 @@ public class TCPClient : TCPBase
                     if (read > 0)
                     {
                         string response = Encoding.ASCII.GetString(buffer, 0, read);
-                        NetworkManager.current.NetworkerPrint(name + " Received: " + response);
+                        NetworkManager.current.NetworkerPrint(Name + " Received: " + response);
                     }
                 }
             }
@@ -151,7 +158,7 @@ public class TCPClient : TCPBase
 
             // Send the message to the connected TcpServer. 
             stream.Write(data, 0, data.Length);
-            NetworkManager.current.NetworkerPrint(name + " sent: " + message);
+            NetworkManager.current.NetworkerPrint(Name + " sent: " + message);
 
         }
         catch (Exception e)
