@@ -30,7 +30,8 @@ public class ObjectManager : MonoBehaviour
     void SendInitialData(GameObject obj)
     {
         //spawn
-        NetworkManager.current.Send(BuildBufferSpawn(Command.Spawn, obj));
+        var buffer = BuildBufferSpawn(Command.Spawn, obj);
+        NetworkManager.current.Send(buffer);
         //move
         //NetworkManager.current.Send(BuildBufferVector3(Command.Move, obj, obj.transform.position));
         //rotate
@@ -108,7 +109,6 @@ public class ObjectManager : MonoBehaviour
 
     void Spawn(string ObjName)
     {
-        print("spwaning");
         var objToSpawn = new GameObject();
         TrackedObjects.Add(ObjName, objToSpawn);
     }

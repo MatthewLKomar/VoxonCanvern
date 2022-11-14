@@ -89,7 +89,7 @@ public class TCPServer : TCPBase
             //Send response to client here... 
             Byte[] reply = Encoding.ASCII.GetBytes(message);
             stream.Write(reply, 0, reply.Length);
-            NetworkManager.current.NetworkerPrint("Sent: " + message);
+            NetworkManager.current.NetworkerPrint(name + " Sent: " + message);
             return true;
         }
         return false;
@@ -151,7 +151,7 @@ public class TCPClient : TCPBase
 
             // Send the message to the connected TcpServer. 
             stream.Write(data, 0, data.Length);
-            NetworkManager.current.NetworkerPrint("Client Sent: " + message);
+            NetworkManager.current.NetworkerPrint(name + " sent: " + message);
 
         }
         catch (Exception e)
