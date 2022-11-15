@@ -25,7 +25,13 @@ public class NetworkManager : MonoBehaviour
 
     public void Awake()
     {
+        if (current == null)
+        {
+            current = this;
+        }
+        else Destroy(gameObject);
         if (isClient)
+            
             client = new TCPClient("Cavern");
         else
             server = new TCPServer("Voxon");

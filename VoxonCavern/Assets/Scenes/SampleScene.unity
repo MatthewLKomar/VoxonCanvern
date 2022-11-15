@@ -443,6 +443,10 @@ PrefabInstance:
       propertyPath: isClient
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7092967773439442463, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
+      propertyPath: IPaddress
+      value: 169.254.125.245
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7092967773439442460, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
     m_AddedGameObjects: []
