@@ -33,6 +33,7 @@ public class TCPClient : TCPBase
     {
         if (client != null)
         {
+            Send("bye");
             client.GetStream().Close();
             client.Close();
         }
@@ -57,6 +58,7 @@ public class TCPClient : TCPBase
                         NetworkerPrint(Name + " Received: " + response);
                         if (response == "bye")
                         {
+                            NetworkerPrint("Server died, client shutting down");
                             Close();
                         }
                     }

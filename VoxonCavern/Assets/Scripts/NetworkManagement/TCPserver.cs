@@ -75,16 +75,21 @@ public class TCPServer : TCPBase
         client = (TcpClient)obj;
         stream = client.GetStream();
 
-        string data;
+        string response;
         Byte[] bytes = new Byte[maxByteLength];
         int i;
         try
         {
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
-                data = Encoding.ASCII.GetString(bytes, 0, i);
-                NetworkerPrint(Name + " Received: " + data);
+                response = Encoding.ASCII.GetString(bytes, 0, i);
+                NetworkerPrint(Name + " Received: " + response);
                 Send("Server has recieved");
+                if (response == "Bye")
+                {
+                    NetworkerPrint("Client disconnected, server shutting down");
+                    Close();
+                }
                 //if (data != "Confirm")
                     //So unity isn't thread safe, so we have to use this tool to call things on the main thread.
                     //UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
