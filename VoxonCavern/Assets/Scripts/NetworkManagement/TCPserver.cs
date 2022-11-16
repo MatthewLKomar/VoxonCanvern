@@ -105,7 +105,7 @@ public class TCPServer : TCPBase
     //this will send the message to the client 
     public bool Send(string message)
     {
-        if (client != null)
+        if (client != null && client.Connected)
         {
             stream = client.GetStream();
             //Send response to client here... 
