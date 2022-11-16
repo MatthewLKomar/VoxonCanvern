@@ -13,9 +13,11 @@ public class TCPServer : TCPBase
     TcpClient client = null;
 
     //Creates the server on a new thread that is listening to any clients
-    public TCPServer(string ServerName)
+    public TCPServer(string ServerName, string IP, int Port)
     {
         Name = ServerName;
+        ipAdress = IP;
+        port = Port;
         Thread t = new Thread(delegate ()
         {
             IPAddress localAddr = IPAddress.Parse(ipAdress);

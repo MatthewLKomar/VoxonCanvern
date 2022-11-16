@@ -25,10 +25,14 @@ public class NetworkManager : MonoBehaviour
 
     public void Awake()
     {
+        if (current == null)
+            current = this;
+        else Destroy(this);
+
         if (isClient)
-            client = new TCPClient("Cavern");
+            client = new TCPClient("Cavern", IPaddress, Port);
         else
-            server = new TCPServer("Voxon");
+            server = new TCPServer("Voxon", IPaddress, Port);
     }
 
     

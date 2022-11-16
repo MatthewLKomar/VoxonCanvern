@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TCPBase : MonoBehaviour
+public class TCPBase
 {
     public string ipAdress = "127.0.0.1";
     public int port = 27000;
@@ -11,7 +11,7 @@ public class TCPBase : MonoBehaviour
 
     public void NetworkerPrint(string text)
     {
-        print(text);
+        NetworkManager.print(text);
     }
 }
 

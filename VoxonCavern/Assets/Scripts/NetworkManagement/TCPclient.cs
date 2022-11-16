@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 public class TCPClient : TCPBase
 {
     TcpClient client;
-    public TCPClient(string clientName)
+    public TCPClient(string clientName, string IP, int Port)
     {
         Name = clientName;
+        ipAdress = IP;
+        port = Port;
         new Thread(() =>
         {
             try
