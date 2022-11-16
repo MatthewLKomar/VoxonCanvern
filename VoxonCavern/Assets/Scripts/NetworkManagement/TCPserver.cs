@@ -84,7 +84,6 @@ public class TCPServer : TCPBase
             {
                 response = Encoding.ASCII.GetString(bytes, 0, i);
                 NetworkerPrint(Name + " Received: " + response);
-                Send("Server has recieved");
                 if (response == "Bye")
                 {
                     NetworkerPrint("Client disconnected, server shutting down");

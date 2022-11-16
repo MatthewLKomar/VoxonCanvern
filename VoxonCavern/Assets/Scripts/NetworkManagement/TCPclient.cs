@@ -34,7 +34,8 @@ public class TCPClient : TCPBase
         if (client != null)
         {
             Send("bye");
-            client.GetStream().Close();
+            if (stream != null)
+                stream.Close();
             client.Close();
         }
     }
