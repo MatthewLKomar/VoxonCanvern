@@ -1,12 +1,7 @@
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 
-using System.Text;
 using UnityEngine;
-using System.Threading.Tasks;
-using System.Collections;
+using UnityEngine.UI;
 
 
 public class NetworkManager : MonoBehaviour
@@ -23,6 +18,8 @@ public class NetworkManager : MonoBehaviour
     TCPServer server;
     TCPClient client;
 
+    public Text DisplayOut;
+
     public void Awake()
     {
         if (current == null)
@@ -33,6 +30,12 @@ public class NetworkManager : MonoBehaviour
             client = new TCPClient("Cavern", IPaddress, Port);
         else
             server = new TCPServer("Voxon", IPaddress, Port);
+    }
+
+    public void PrintAndDisplay(string text)
+    {
+        DisplayOut.text = text;
+        print(text);
     }
 
     public void OnDestroy()

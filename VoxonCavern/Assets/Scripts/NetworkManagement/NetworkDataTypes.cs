@@ -11,7 +11,7 @@ public class TCPBase
 
     public void NetworkerPrint(string text)
     {
-        NetworkManager.print(text);
+        NetworkManager.current.PrintAndDisplay(text);
     }
 
     public virtual void Close()
