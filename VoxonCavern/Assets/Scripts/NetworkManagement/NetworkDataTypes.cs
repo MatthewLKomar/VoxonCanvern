@@ -13,6 +13,11 @@ public class TCPBase
     {
         NetworkManager.print(text);
     }
+
+    public virtual void Close()
+    {
+        return; 
+    }
 }
 
 public enum Command

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 public class TCPClient : TCPBase
 {
     TcpClient client;
+    NetworkStream stream;
     public TCPClient(string clientName, string IP, int Port)
     {
         Name = clientName;
@@ -28,13 +29,23 @@ public class TCPClient : TCPBase
         }).Start();
     }
 
+    public override void Close()
+    {
+        if (client != null)
+        {
+            client.Client.Close();
+            if (stream != null)
+                stream.Close();
+        }
+    }
+
     async Task Listen()
     {
         try
         {
             if (client.Connected)
             {
-                NetworkStream stream = client.GetStream();
+                stream = client.GetStream();
 
                 while (client.Connected)
                 {
@@ -60,7 +71,7 @@ public class TCPClient : TCPBase
     {
         try
         {
-            NetworkStream stream = client.GetStream();
+            stream = client.GetStream();
             // Translate the Message into ASCII.
             Byte[] data = Encoding.ASCII.GetBytes(message);
 

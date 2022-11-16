@@ -35,7 +35,19 @@ public class NetworkManager : MonoBehaviour
             server = new TCPServer("Voxon", IPaddress, Port);
     }
 
-    
+    public void OnDestroy()
+    {
+        if (client != null)
+        {
+            client.Close();
+        } else if (server != null)
+        {
+            server.Close();
+        }
+
+    }
+
+
 
     public void Send(string text)
     {

@@ -12,6 +12,8 @@ public class TCPServer : TCPBase
     TcpListener server = null;
     TcpClient client = null;
 
+    NetworkStream stream = null;
+
     //Creates the server on a new thread that is listening to any clients
     public TCPServer(string ServerName, string IP, int Port)
     {
@@ -47,11 +49,20 @@ public class TCPServer : TCPBase
         {
             // something went wrong here...
             NetworkerPrint("SocketException:" + e);
-            server.Stop();
+            Close();
         }
     }
 
-
+    public override void Close()
+    {
+        if (server != null)
+        {
+            server.Stop();
+            server.Server.Close();
+            if (stream != null)
+                stream.Close();
+        }
+    }
     public IEnumerator ProcessBuffer(string data)
     {
         ObjectManager.current.ProcessBuffer(data);
@@ -61,7 +72,7 @@ public class TCPServer : TCPBase
     public void ListenForData(System.Object obj)
     {
         client = (TcpClient)obj;
-        var stream = client.GetStream();
+        stream = client.GetStream();
 
         string data;
         Byte[] bytes = new Byte[maxByteLength];
@@ -72,14 +83,15 @@ public class TCPServer : TCPBase
             {
                 data = Encoding.ASCII.GetString(bytes, 0, i);
                 NetworkerPrint(Name + " Received: " + data);
-                if (data != "Confirm")
+                //if (data != "Confirm")
                     //So unity isn't thread safe, so we have to use this tool to call things on the main thread.
-                    UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
+                    //UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
             }
         }
         catch (Exception e)
         {
             NetworkerPrint("Exception: " + e.ToString());
+            Close();
         }
     }
 
@@ -88,7 +100,7 @@ public class TCPServer : TCPBase
     {
         if (client != null)
         {
-            var stream = client.GetStream();
+            stream = client.GetStream();
             //Send response to client here... 
             Byte[] reply = Encoding.ASCII.GetBytes(message);
             stream.Write(reply, 0, reply.Length);
