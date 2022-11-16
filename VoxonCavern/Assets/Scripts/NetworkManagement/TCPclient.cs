@@ -20,6 +20,7 @@ public class TCPClient : TCPBase
                 Thread.CurrentThread.IsBackground = true;
                 client = new TcpClient(ipAdress, port);
                 var result = Listen();
+                Send("Client: yo");
             }
             catch (Exception ex)
             {
@@ -56,6 +57,7 @@ public class TCPClient : TCPBase
                     {
                         string response = Encoding.ASCII.GetString(buffer, 0, read);
                         NetworkerPrint(Name + " Received: " + response);
+                        Send("Client says hello");
                     }
                 }
             }

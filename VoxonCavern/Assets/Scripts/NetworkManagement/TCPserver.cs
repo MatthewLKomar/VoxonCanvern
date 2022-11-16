@@ -83,9 +83,10 @@ public class TCPServer : TCPBase
             {
                 data = Encoding.ASCII.GetString(bytes, 0, i);
                 NetworkerPrint(Name + " Received: " + data);
+                Send("Server has recieved");
                 //if (data != "Confirm")
                     //So unity isn't thread safe, so we have to use this tool to call things on the main thread.
-                    //UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
+                    UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
             }
         }
         catch (Exception e)
