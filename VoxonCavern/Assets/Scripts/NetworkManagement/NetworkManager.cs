@@ -1,5 +1,5 @@
 using System;
-
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,10 +32,15 @@ public class NetworkManager : MonoBehaviour
             server = new TCPServer("Voxon", IPaddress, Port);
     }
 
-    public void PrintAndDisplay(string text)
+    private IEnumerator PrintDisplay(string text)
     {
         DisplayOut.text = text;
         print(text);
+        yield return null;
+    }
+    public void PrintAndDisplay(string text)
+    {
+        UnityMainThreadDispatcher.Instance().Enqueue(PrintDisplay(text));
     }
 
     public void OnDestroy()

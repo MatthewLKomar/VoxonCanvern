@@ -192,7 +192,7 @@ MonoBehaviour:
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: New Text
 --- !u!222 &563990033
@@ -696,6 +696,10 @@ PrefabInstance:
       propertyPath: IPaddress
       value: 10.202.203.174
       objectReference: {fileID: 0}
+    - target: {fileID: 7092967773439442463, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
+      propertyPath: DisplayOut
+      value: 
+      objectReference: {fileID: 563990032}
     m_RemovedComponents:
     - {fileID: 7092967773439442460, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
     m_AddedGameObjects: []
