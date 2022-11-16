@@ -20,7 +20,6 @@ public class TCPClient : TCPBase
                 Thread.CurrentThread.IsBackground = true;
                 client = new TcpClient(ipAdress, port);
                 var result = Listen();
-                Send("Client: yo");
             }
             catch (Exception ex)
             {
@@ -34,9 +33,8 @@ public class TCPClient : TCPBase
     {
         if (client != null)
         {
-            client.Client.Close();
-            if (stream != null)
-                stream.Close();
+            client.GetStream().Close();
+            client.Close();
         }
     }
 
@@ -57,7 +55,10 @@ public class TCPClient : TCPBase
                     {
                         string response = Encoding.ASCII.GetString(buffer, 0, read);
                         NetworkerPrint(Name + " Received: " + response);
-                        Send("Client says hello");
+                        if (response == "bye")
+                        {
+                            Close();
+                        }
                     }
                 }
             }
@@ -65,7 +66,7 @@ public class TCPClient : TCPBase
         catch (Exception ex)
         {
             NetworkerPrint("Client listening err:" + ex);
-            client.Close();
+            Close();
         }
     }
 

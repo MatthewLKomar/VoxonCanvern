@@ -57,6 +57,7 @@ public class TCPServer : TCPBase
     {
         if (server != null)
         {
+            Send("bye");
             server.Stop();
             server.Server.Close();
             if (stream != null)
@@ -86,7 +87,7 @@ public class TCPServer : TCPBase
                 Send("Server has recieved");
                 //if (data != "Confirm")
                     //So unity isn't thread safe, so we have to use this tool to call things on the main thread.
-                    UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
+                    //UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(data));
             }
         }
         catch (Exception e)
