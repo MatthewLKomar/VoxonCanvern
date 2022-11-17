@@ -71,16 +71,16 @@
      <Compile Include="Assets\SteamVR\Input\Editor\SteamVR_Skeleton_PoserEditor.cs" />
      <None Include="Assets\SteamVR\Input\Editor\SteamVR_Input_Editor.asmdef" />
  <Reference Include="UnityEditor.UI">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.TestRunner">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TestRunner">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.40f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
@@ -275,25 +275,25 @@
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.40f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="Valve.Newtonsoft.Json">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
  </Reference>
  <Reference Include="log4netPlastic">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/log4netPlastic.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/log4netPlastic.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Plastic.Antlr3.Runtime">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/Unity.Plastic.Antlr3.Runtime.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Plastic.Newtonsoft.Json">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/Unity.Plastic.Newtonsoft.Json.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/Unity.Plastic.Newtonsoft.Json.dll</HintPath>
  </Reference>
  <Reference Include="unityplastic">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/unityplastic.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.collab-proxy@1.14.18/Lib/Editor/PlasticSCM/unityplastic.dll</HintPath>
  </Reference>
  <Reference Include="ICSharpCode.NRefactory">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.render-pipelines.core@7.7.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.render-pipelines.core@7.7.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
  </Reference>
  <Reference Include="nunit.framework">
- <HintPath>C:/p4/2022_semester_3/bvw/round5/Team 70/working/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.ext.nunit@1.0.6/net35/unity-custom/nunit.framework.dll</HintPath>
+ <HintPath>C:/Users/Demo/Documents/GitHub/VoxonCanvern/Team70_CavernPart/Library/PackageCache/com.unity.ext.nunit@1.0.6/net35/unity-custom/nunit.framework.dll</HintPath>
  </Reference>
  <Reference Include="mscorlib">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.40f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
