@@ -49,7 +49,7 @@ public class ComputerController : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) || currInput.Length > 4)
+        if (Input.GetKeyDown(KeyCode.Return) || currInput.Length > 3)
         {
             GameEvents.instance.EveCheckPassword(currInput);
 
@@ -58,13 +58,14 @@ public class ComputerController : MonoBehaviour
             if (findMatch)
             {
                 inputUI.text = "Correct Password";
+                AudioManager.instance.PlayInputSound(1);
             }
             else
             {
                 inputUI.text = "Wrong Password: ";
+                AudioManager.instance.PlayInputSound(0);
             }
             findMatch = false;
-            // TODO: Compare password with current one.
         }
         else
         {

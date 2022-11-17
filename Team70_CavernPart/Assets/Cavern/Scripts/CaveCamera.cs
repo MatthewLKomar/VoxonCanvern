@@ -131,6 +131,7 @@ public class CaveCamera : MonoBehaviour
                 cam.GetComponent<Camera>().targetTexture = camOut;
                 cam.GetComponent<Camera>().cullingMask = GetComponent<Camera>().cullingMask;
                 cam.GetComponent<Camera>().stereoTargetEye = GetComponent<Camera>().stereoTargetEye;
+                cam.GetComponent<Camera>().backgroundColor = GetComponent<Camera>().backgroundColor;
                 cameraOutputTextures.Add(camOut);
             }
         }

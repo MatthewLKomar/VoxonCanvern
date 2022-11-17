@@ -214,7 +214,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: c424ddf081f04f64f81729049a87beaf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04464c8414ba2054c8681c69496c0c8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 2.9845
+  radius: 3.03
   height: 2.3368
   elevation: 0
   resolution: 32
@@ -432,7 +432,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 3
+  m_TargetEye: 0
   m_HDR: 1
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
@@ -532,7 +532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderMode: 2
-  IPD: 62
+  IPD: 124
   clipPlane: 1
   headTrackObject: {fileID: 0}
   panelResolution: {x: 240, y: 1080}
@@ -767,7 +767,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 8192f47b1fdfa854b848532e7552128b,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.9845
+      value: 3.03
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8192f47b1fdfa854b848532e7552128b,
         type: 3}
@@ -777,7 +777,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 8192f47b1fdfa854b848532e7552128b,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 2.9845
+      value: 3.03
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8192f47b1fdfa854b848532e7552128b,
         type: 3}

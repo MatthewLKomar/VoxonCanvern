@@ -14,10 +14,9 @@ public class CGameManager : MonoBehaviour
     private float timer = 300f;
     private int nItemCollected = 0;
 
-    [SerializeField] TextMeshPro timerUI;           // TODO: Will need move all the UI stuff to a specific script.
-    [SerializeField] GameObject counterUI;
-
-
+    [SerializeField] TextMeshPro counterUI;
+    [SerializeField] Transform trackerloc;
+    
     private void Awake()
     {
         if(instance != null && instance != this)
@@ -41,6 +40,8 @@ public class CGameManager : MonoBehaviour
     {
         UpdateStatus();
         UpdateTimer();
+
+        counterUI.text = trackerloc.position.ToString();
     }
 
 
@@ -69,12 +70,24 @@ public class CGameManager : MonoBehaviour
     // Start the pre game part.
     private IEnumerator GameStage0()
     {
+        // TODO: wait until the Voxon sends a message tell the game starts.
         while (!Input.GetKey(KeyCode.RightShift))
         {
             yield return null;              // Wait until the player enters a button.
         }
 
         ComputerController.instance.SetStartPC(true);           // Enable the input computer.
+
+        counterUI.text = "Number of item collected: 0";
+
+
+        GameObject[] artLights = GameObject.FindGameObjectsWithTag("ArtLights");
+
+        foreach(GameObject artLight in artLights)
+        {
+            artLight.GetComponent<Light>().intensity = 10;
+        }
+
 
         gameStage = 1;
         isInStage = false;
@@ -96,13 +109,12 @@ public class CGameManager : MonoBehaviour
         }
 
         timer -= 1 * Time.deltaTime;                // Update the timer.
-        timerUI.text = Math.Floor(timer).ToString();        // Update the timer UI.
     }
 
 
     public void IncreItemCollected()            // Call by other classes to increment the number of artworks collected.
     {
         nItemCollected++;
-        counterUI.GetComponent<TextMeshPro>().text = "Number of item collected: " + nItemCollected.ToString();
+        counterUI.text = "Number of item collected: " + nItemCollected.ToString();
     }
 }

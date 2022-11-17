@@ -28,9 +28,14 @@ public class Artworks : MonoBehaviour
             return;
         }
 
-        CGameManager.instance.IncreItemCollected();
-
         ComputerController.instance.findMatch = true;       // Notify the computer that there's a match.
+
+        if (!isLocked)
+        {
+            return;
+        }
+
+        CGameManager.instance.IncreItemCollected();
 
         Debug.LogWarning(id + " is unlocked");
 

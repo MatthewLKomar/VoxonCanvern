@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class VoxonTextController : MonoBehaviour
 {
-	private bool isHacked = false;
 
 	Voxon.VXTextComponent text;
 	string number = "";						// The current input by the guest.
-	string password = "1234";					// The true password.
+	[SerializeField] string password = "ETCOS";                  // The true password.
+	private char[] charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
 
 	void Start()
 	{
@@ -18,7 +18,7 @@ public class VoxonTextController : MonoBehaviour
 
 	void Update()
 	{
-        if (isHacked || !text.forceUpdatePerFrame)
+        if (MapController.instance.hackStatus != 0)
         {
 			return;
         }
@@ -27,25 +27,33 @@ public class VoxonTextController : MonoBehaviour
         {
 			if(number == password)
             {
-				text.text = "Hacked!";					// Password matched.
-				isHacked = true;
-				GameEvents.instance.EveSetActiveCube();
+				text.text = "";					// Password matched.
+				GameEvents.instance.EveSetActiveCube(true);
 			}
             else
             {
-				text.text = "Password: ";			// Not matched.
+				text.text = "Wrong Password";		// Not matched.
 				number = "";
+				AudioManager.instance.PlayActivateSound(1);
 			}
         }
         else
         {
-			for(int i = 0; i < 10; i++)
+			foreach(char charK in charList)
             {
-                if (Voxon.Input.GetKeyDown(i.ToString()))		// If there's an input match.
+                if (Voxon.Input.GetKeyDown(charK.ToString()))		// If there's an input match.
                 {
-					text.text += i.ToString();					// Add it to the number.
-					number += i.ToString();
-                }
+					if (text.text[0] != 'P')
+					{
+						text.text = "Password: " + charK.ToString();
+
+					}
+					else
+					{
+						text.text += charK.ToString();                  // Add it to the number.
+					}
+					number += charK.ToString();
+				}
             }
         }
 
