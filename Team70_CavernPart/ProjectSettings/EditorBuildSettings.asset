@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Cavern/Scenes/Cavern Demo.unity
-    guid: 0361e2449d62a104fbc3a1b02847a087
+    path: Assets/Scenes/GameScenes.unity
+    guid: a3a38f778dfd6ec4a9ea023ad956dac9
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 677f8cf8c13db5848ae76f5bbab576c8,
       type: 2}

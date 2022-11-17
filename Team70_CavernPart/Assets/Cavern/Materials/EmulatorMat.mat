@@ -26,5 +26,5 @@ Material:
     m_Floats:
     - _DisplayIdx: 0
     - _NProjectors: 1
-    - _StereoMode: 3
+    - _StereoMode: 5
     m_Colors: []

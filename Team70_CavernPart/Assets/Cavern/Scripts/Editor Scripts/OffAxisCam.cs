@@ -19,6 +19,11 @@ public class OffAxisCam : MonoBehaviour
     // Component imports
     private Camera cam;
 
+    [HideInInspector]
+    public int CavePlaneIDX = -1;
+
+    private float clipPlane;
+
     /// <summary>
     /// Sets the camera corners in world space for off-axis projection
     /// </summary>
@@ -26,6 +31,8 @@ public class OffAxisCam : MonoBehaviour
     /// <param name="clipPlane">How far from the center of the cavern do we render (for 3D stuff that pops off the screen). 0 renders everything, 1 clips at the screen</param>
     public void AssignProjectionCorners(Vector3[] cornersUnscaled, float clipPlane = 1)
     {
+        this.clipPlane = clipPlane;
+        
         if (cornersUnscaled.Length != 4)
             Debug.LogError("4 corners not assigned in AssignProjectionCorners function.");
         else
@@ -84,6 +91,7 @@ public class OffAxisCam : MonoBehaviour
     /// <summary>
     /// Updates the attached camera's projection matrix so it's looking in the correct direction
     /// </summary>
+    /// https://medium.com/try-creative-tech/off-axis-projection-in-unity-1572d826541e
     public void UpdateProjectionMatrix()
     {
         // Make sure we've had our values initialized
@@ -95,7 +103,10 @@ public class OffAxisCam : MonoBehaviour
         Vector3 lookatDir = Vector3.zero;
         for (int i = 0; i < 4; i++)
         {
-            pointToCorners[i] = projectionCorners[i] - transform.position;
+            if (CavePlaneIDX != -1)
+                projectionCorners[i] = CaveControls.getPanelCorners(CavePlaneIDX)[i];
+            pointToCorners[i] = (projectionCorners[i] - transform.position) * clipPlane;
+
             lookatDir += pointToCorners[i];
         }
 

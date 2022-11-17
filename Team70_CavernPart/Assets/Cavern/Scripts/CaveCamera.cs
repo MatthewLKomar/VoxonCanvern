@@ -123,6 +123,7 @@ public class CaveCamera : MonoBehaviour
                 OffAxisCam camProjection = cam.AddComponent<OffAxisCam>();
                 caveCameras.Add(camProjection);
                 camProjection.AssignProjectionCorners(panelCorners, clipPlane);
+                camProjection.CavePlaneIDX = i;
                 camProjection.gizmoCol = eye == -1 ? Color.red : Color.blue;
 
                 // Set up output textures for this camera
@@ -130,6 +131,7 @@ public class CaveCamera : MonoBehaviour
                 cam.GetComponent<Camera>().targetTexture = camOut;
                 cam.GetComponent<Camera>().cullingMask = GetComponent<Camera>().cullingMask;
                 cam.GetComponent<Camera>().stereoTargetEye = GetComponent<Camera>().stereoTargetEye;
+                cam.GetComponent<Camera>().backgroundColor = GetComponent<Camera>().backgroundColor;
                 cameraOutputTextures.Add(camOut);
             }
         }

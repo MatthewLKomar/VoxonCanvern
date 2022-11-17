@@ -31,13 +31,13 @@ public class GameEvents : MonoBehaviour
     }
 
 
-    public event Action onSetActiveCube;
+    public event Action<bool> onSetActiveCube;
 
-    public void EveSetActiveCube()
+    public void EveSetActiveCube(bool newState)
     {
         if(onSetActiveCube != null)
         {
-            onSetActiveCube();
+            onSetActiveCube(newState);
         }
     }
 }
