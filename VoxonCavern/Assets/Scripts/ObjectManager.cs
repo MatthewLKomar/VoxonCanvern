@@ -81,34 +81,38 @@ public class ObjectManager : MonoBehaviour
 
     public void ProcessBuffer(string json)
     {
-        Payload buffer = JsonUtility.FromJson<Payload>(json);
-        print(buffer.command);
-        switch (buffer.command)
+        string[] commands = json.Split('\n');
+        foreach(var command in commands)
         {
-            case Command.GenericEvent:
-                CallGenericEvent();
-                break;
-            case Command.Spawn:
-                Spawn(buffer.ObjectName);
-                break;
-            case Command.Parent:
-                var ParentParam = JsonUtility.FromJson<AssignParam>(buffer.Params);
-                Parent(buffer.ObjectName, ParentParam.ParentObj);
-                break;
-            case Command.Move:
-                var MoveParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
-                Move(buffer.ObjectName, MoveParam.vector3);
-                break;
-            case Command.Scale:
-                var ScaleParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
-                Scale(buffer.ObjectName, ScaleParam.vector3);
-                break;
-            case Command.Rotate:
-                var RotationParam = JsonUtility.FromJson<QuaternionParam>(buffer.Params);
-                Rotate(buffer.ObjectName, RotationParam.quaternion);
-                break;
-            default:
-                break;
+            Payload buffer = JsonUtility.FromJson<Payload>(command);
+            print(buffer.command);
+            switch (buffer.command)
+            {
+                case Command.GenericEvent:
+                    CallGenericEvent();
+                    break;
+                case Command.Spawn:
+                    Spawn(buffer.ObjectName);
+                    break;
+                case Command.Parent:
+                    var ParentParam = JsonUtility.FromJson<AssignParam>(buffer.Params);
+                    Parent(buffer.ObjectName, ParentParam.ParentObj);
+                    break;
+                case Command.Move:
+                    var MoveParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
+                    Move(buffer.ObjectName, MoveParam.vector3);
+                    break;
+                case Command.Scale:
+                    var ScaleParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
+                    Scale(buffer.ObjectName, ScaleParam.vector3);
+                    break;
+                case Command.Rotate:
+                    var RotationParam = JsonUtility.FromJson<QuaternionParam>(buffer.Params);
+                    Rotate(buffer.ObjectName, RotationParam.quaternion);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -167,40 +171,45 @@ public class ObjectManager : MonoBehaviour
         return payload;
     }
 
-    [Tooltip("Create the JSON buffer to send to the network")]
+    string FormatPayload(Payload payload)
+    {
+        return JsonUtility.ToJson(payload) + "\n";
+    }
+
+    //[Tooltip("Create the JSON buffer to send to the network")]
     string BuildBufferForGenericEvent(Command command, GameObject obj, string Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = GenericEventToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
     string BuildBufferVector3(Command command, GameObject obj, Vector3 Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = Vector3ToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
     string BuildBufferSpawn(Command command, GameObject obj)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = "";
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
     string BuildBufferRotation(Command command, GameObject obj, Quaternion Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = RotateToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
     string BuildBufferParent(Command command, GameObject obj, string Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = ParentToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
 
