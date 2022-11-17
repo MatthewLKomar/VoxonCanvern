@@ -627,14 +627,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
-    - target: {fileID: 7092967773439442460, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7092967773439442460, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
-      propertyPath: ObjectsToReplicate.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 7092967773439442461, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -680,17 +672,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7092967773439442463, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
-      propertyPath: isClient
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7092967773439442463, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
-      propertyPath: IPaddress
-      value: 10.0.0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7092967773439442463, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
       propertyPath: DisplayOut
       value: 
       objectReference: {fileID: 563990032}
-    m_RemovedComponents:
-    - {fileID: 7092967773439442460, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 095df25fdb235f241a4c0c851eb114cc, type: 3}
