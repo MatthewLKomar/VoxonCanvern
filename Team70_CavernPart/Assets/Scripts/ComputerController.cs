@@ -14,7 +14,19 @@ public class ComputerController : MonoBehaviour
     [SerializeField] string currInput = "";
     [SerializeField] TextMeshPro inputUI;
 
-    private char[] decodeKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();            // Use this to find which key is pressed and whether is a letter.
+    private Dictionary<KeyCode, int> keyDict = new Dictionary<KeyCode, int>()
+    {
+        {KeyCode.Alpha0, 0},
+        {KeyCode.Alpha1, 1},
+        {KeyCode.Alpha2, 2},
+        {KeyCode.Alpha3, 3},
+        {KeyCode.Alpha4, 4},
+        {KeyCode.Alpha5, 5},
+        {KeyCode.Alpha6, 6},
+        {KeyCode.Alpha7, 7},
+        {KeyCode.Alpha8, 8},
+        {KeyCode.Alpha9, 9},
+    };
 
 
     private void Awake()
@@ -27,6 +39,7 @@ public class ComputerController : MonoBehaviour
         {
             instance = this;
         }
+        
     }
 
 
@@ -69,20 +82,19 @@ public class ComputerController : MonoBehaviour
         }
         else
         {
-            foreach (char charK in decodeKey)               
+            foreach (KeyValuePair<KeyCode, int> keyp in keyDict)
             {
-                KeyCode newkeyCode = (KeyCode)System.Enum.Parse(typeof(KeyCode), charK.ToString());
-                if (Input.GetKeyDown(newkeyCode))         // If it is a letter or a number.
+                if (Input.GetKeyDown(keyp.Key))         // If it is a letter or a number.
                 {
-                    currInput += charK.ToString();              // Add it to the bottom.
+                    currInput += keyp.Value.ToString();              // Add it to the bottom.
 
-                    if(inputUI.text[0] == 'E')
+                    if (inputUI.text[0] == 'E')
                     {
-                        inputUI.text += charK;
+                        inputUI.text += keyp.Value.ToString();
                     }
                     else
                     {
-                        inputUI.text = "Enter Password: " + charK;
+                        inputUI.text = "Enter Password: " + keyp.Value.ToString();
                     }
                     break;
                 }
