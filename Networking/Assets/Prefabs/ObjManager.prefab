@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7092967773439442461}
   - component: {fileID: 7092967773439442460}
+  - component: {fileID: 8144226676237451098}
   m_Layer: 0
   m_Name: ObjManager
   m_TagString: Untagged
@@ -78,6 +79,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ObjectsToReplicate:
   - {fileID: 8185621297025195327}
+--- !u!114 &8144226676237451098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7092967773439442457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64cf64e10244c0940ba2b8c768806847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Triggers:
+  - name: 
+    ID: 0
+    unityEvent:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!1 &8185621297025195327
 GameObject:
   m_ObjectHideFlags: 0

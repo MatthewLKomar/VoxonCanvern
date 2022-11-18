@@ -181,35 +181,35 @@ public class ObjectManager : MonoBehaviour
     }
 
     //[Tooltip("Create the JSON buffer to send to the network")]
-    string BuildBufferGenericEvent(Command command, GameObject obj, string Event)
+    public string BuildBufferGenericEvent(Command command, GameObject obj, string Event, int ID)
     {
         var payload = CreateEmptyPayload(command, obj);
-        payload.Params = GenericEventToJson(Event);
+        payload.Params = GenericEventToJson(Event, ID);
         return FormatPayload(payload);
     }
 
-    string BuildBufferVector3(Command command, GameObject obj, Vector3 Event)
+    public string BuildBufferVector3(Command command, GameObject obj, Vector3 Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = Vector3ToJson(Event);
         return FormatPayload(payload);
     }
 
-    string BuildBufferSpawn(Command command, GameObject obj)
+    public string BuildBufferSpawn(Command command, GameObject obj)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = "";
         return FormatPayload(payload);
     }
 
-    string BuildBufferRotation(Command command, GameObject obj, Quaternion Event)
+    public string BuildBufferRotation(Command command, GameObject obj, Quaternion Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = RotateToJson(Event);
         return FormatPayload(payload);
     }
 
-    string BuildBufferParent(Command command, GameObject obj, string Event)
+    public string BuildBufferParent(Command command, GameObject obj, string Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = ParentToJson(Event);
@@ -218,10 +218,11 @@ public class ObjectManager : MonoBehaviour
 
 
 
-    string GenericEventToJson(string Event)
+    string GenericEventToJson(string Event, int ID)
     {
         var GenericEvent = new EventNameParam();
         GenericEvent.EventName = Event;
+        GenericEvent.eventID = ID;
         return JsonUtility.ToJson(GenericEvent);
     }
 
