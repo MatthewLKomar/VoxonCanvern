@@ -55,8 +55,6 @@ public class NetworkManager : MonoBehaviour
 
     }
 
-
-
     public void Send(string text)
     {
         if (isClient)

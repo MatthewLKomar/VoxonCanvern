@@ -58,6 +58,7 @@ public struct AssignParam
 public struct EventNameParam
 {
     public string EventName;
+    public int eventID;
 }
 
 [System.Serializable]
@@ -69,7 +70,5 @@ public struct Payload
     public string ObjectName; 
     [Tooltip("Serialized JSON data and its data type will be relative to the command")]
     public string Params;  
-
-
 }
 

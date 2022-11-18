@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(EventManager))]
 public class ObjectManager : MonoBehaviour
 {
     public static ObjectManager current;
-    public NetworkManager networker; 
-    public bool start = false;
+
+    private NetworkManager networker = NetworkManager.current;
+    private EventManager eventManager; 
     [Tooltip("Objects here will be replicated")]
     public List<GameObject> ObjectsToReplicate = new List<GameObject>();
 
@@ -22,6 +24,8 @@ public class ObjectManager : MonoBehaviour
             current = this;
         }
         else Destroy(gameObject);
+
+        eventManager = GetComponent<EventManager>();
     }
     public void ConfirmNetworkerIsRunning(string text)
     {
@@ -70,14 +74,7 @@ public class ObjectManager : MonoBehaviour
         yield return null;
     }
     
-    private void Update()
-    {
-        if (start)
-        {
-            StartCoroutine(InitializeTrackedObjs());
-            start = false;
-        }
-    }
+
 
     public void ProcessBuffer(string json)
     {
@@ -89,7 +86,7 @@ public class ObjectManager : MonoBehaviour
             switch (buffer.command)
             {
                 case Command.GenericEvent:
-                    CallGenericEvent();
+                    CallGenericEvent(buffer.Params);
                     break;
                 case Command.Spawn:
                     Spawn(buffer.ObjectName);
@@ -157,10 +154,17 @@ public class ObjectManager : MonoBehaviour
         obj.transform.rotation = quaternion;
     }
 
-    void CallGenericEvent()
+    /* Mkomar says... 
+         The Call Generic Event recieves PayloadParams in JSON format. 
+            It will convert it into a sturct and then it will call a corresponding
+            event from the event manager 
+         The event manager is expected to have the correct ID number inside it,
+         otherwise this call will be ignored and logged into console. 
+    */
+    void CallGenericEvent(string PayloadParams)
     {
-        //Event Manager work here
-        print("TODO: Implement Call Generic Event");
+        EventNameParam ParentParam = JsonUtility.FromJson<EventNameParam>(PayloadParams);
+        eventManager.triggerID(ParentParam.eventID);
     }
 
     Payload CreateEmptyPayload(Command command, GameObject obj)
@@ -177,7 +181,7 @@ public class ObjectManager : MonoBehaviour
     }
 
     //[Tooltip("Create the JSON buffer to send to the network")]
-    string BuildBufferForGenericEvent(Command command, GameObject obj, string Event)
+    string BuildBufferGenericEvent(Command command, GameObject obj, string Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = GenericEventToJson(Event);
