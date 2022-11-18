@@ -8,7 +8,7 @@ public class VoxonTextController : MonoBehaviour
 	Voxon.VXTextComponent text;
 	string number = "";						// The current input by the guest.
 	[SerializeField] string password = "ETCOS";                  // The true password.
-	private char[] charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
+	private char[] charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
 	void Start()
 	{

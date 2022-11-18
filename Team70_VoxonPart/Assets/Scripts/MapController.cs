@@ -10,7 +10,7 @@ public class MapController : MonoBehaviour
 
     private float timer = 300f;
 
-    [SerializeField] GameObject magicCube;                  // The actual cube object
+    [SerializeField] Transform magicCube;                  // The actual cube object
     [SerializeField] VoxonTextController textCon;
     [SerializeField] Voxon.VXTextComponent timerUI;
     
@@ -56,38 +56,32 @@ public class MapController : MonoBehaviour
             return;
         }
 
-
-        Vector3 worldRot = magicCube.transform.rotation.eulerAngles;
-
-        if (Voxon.Input.GetKey("rotate_Left_x"))          // Rotate the cube horizontally.
+        if (Voxon.Input.GetKey("rotate_Left_x"))          // Rotate the cube along x.
         {
-            worldRot.x += 1f;
+            magicCube.Rotate(-Vector3.left * 1.5f);
         }
         if (Voxon.Input.GetKey("rotate_Right_x"))
         {
-            worldRot.x -= 1f;
+            magicCube.Rotate(Vector3.left * 1.5f);
         }
 
-        if (Voxon.Input.GetKey("rotate_Left_y"))          // Rotate the cube horizontally.
+        if (Voxon.Input.GetKey("rotate_Left_y"))          // Rotate the cube along z.
         {
-            worldRot.y += 1f;
+            magicCube.Rotate(Vector3.forward * 1.5f);
         }
         if (Voxon.Input.GetKey("rotate_Right_y"))
         {
-            worldRot.y -= 1f;
+            magicCube.Rotate(-Vector3.forward * 1.5f);
         }
 
-
-        if (Voxon.Input.GetKey("rotate_Left_z"))          // Rotate the cube horizontally.
+        if (Voxon.Input.GetKey("rotate_Left_z"))          // Rotate the cube along y.
         {
-            worldRot.z += 1f;
+            magicCube.Rotate(Vector3.up * 1.5f);
         }
         if (Voxon.Input.GetKey("rotate_Right_z"))
         {
-            worldRot.z -= 1f;
+            magicCube.Rotate(-Vector3.up * 1.5f);
         }
-
-        magicCube.transform.rotation = Quaternion.Euler(worldRot);
 
         UpdatePlane();
     }
@@ -118,14 +112,14 @@ public class MapController : MonoBehaviour
     {
         if (newStatus)
         {
-            magicCube.transform.position = new Vector3(0, 0.4f, 0);            // Move it to the center.
+            magicCube.position = new Vector3(0, 0.4f, 0);            // Move it to the center.
             AudioManager.instance.PlayActivateSound(0);
             instance.hackStatus = 1;
             // TODO: Pass data to Cavern notifying the timer starts counting down.
         }
         else
         {
-            magicCube.transform.position = new Vector3(0, 5.4f, 0);            // Move it to the center.
+            magicCube.position = new Vector3(0, 5.4f, 0);            // Move it to the center.
             PlaneController.instance.ChangePlaneList(0);
             instance.hackStatus = 2;
             // TODO: Add audio about ending.
@@ -135,7 +129,7 @@ public class MapController : MonoBehaviour
 
     public void UpdatePlane()
     {
-        Vector3 degree = magicCube.transform.rotation.eulerAngles;
+        Vector3 degree = magicCube.rotation.eulerAngles;
 
         float x_mod = degree.x % 360f;
         float z_mod = degree.z % 360f;
