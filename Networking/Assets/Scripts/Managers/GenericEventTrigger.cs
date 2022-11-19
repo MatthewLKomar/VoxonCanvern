@@ -20,9 +20,17 @@ public struct Trigger
 public class GenericEventTrigger : MonoBehaviour
 {
     // Start is called before the first frame update
-    private NetworkManager network = NetworkManager.current;
-    private ObjectManager objectManager = ObjectManager.current;
-    public Trigger EventTrigger; 
+    private NetworkManager network;
+    private ObjectManager objectManager;
+    public Trigger EventTrigger;
+
+    public bool button = false;
+
+    private void Start()
+    {
+        objectManager = ObjectManager.current;
+        network = NetworkManager.current;
+    }
     public void Transmit()
     {
         string buffer = objectManager.BuildBufferGenericEvent
@@ -37,6 +45,10 @@ public class GenericEventTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (button)
+        {
+            Transmit();
+            button = false;
+        }
     }
 }
