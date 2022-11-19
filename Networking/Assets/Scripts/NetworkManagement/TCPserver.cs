@@ -64,11 +64,7 @@ public class TCPServer : TCPBase
                 stream.Close();
         }
     }
-    public IEnumerator ProcessBuffer(string data)
-    {
-        ObjectManager.current.ProcessBuffer(data);
-        yield return null;
-    }
+
 
     public void ListenForData(System.Object obj)
     {
@@ -89,13 +85,8 @@ public class TCPServer : TCPBase
                     NetworkerPrint("Client disconnected, server shutting down");
                     Close();
                 }
-                
-                /*
-                 if (response != "Confirm")
-                    //So unity isn't thread safe, so we have to use this tool to call things on the main thread.
-                    UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(response));
-                */
-                    
+                //So unity isn't thread safe, so we have to use this tool to call things on the main thread.
+                UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(response));
             }
         }
         catch (Exception e)

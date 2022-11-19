@@ -18,6 +18,12 @@ public class TCPBase
     {
         return; 
     }
+
+    public IEnumerator ProcessBuffer(string data)
+    {
+        ObjectManager.current.ProcessBuffer(data);
+        yield return null;
+    }
 }
 
 public enum Command
