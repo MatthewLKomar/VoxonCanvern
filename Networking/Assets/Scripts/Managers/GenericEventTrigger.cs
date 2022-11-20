@@ -24,8 +24,6 @@ public class GenericEventTrigger : MonoBehaviour
     private ObjectManager objectManager;
     public Trigger EventTrigger;
 
-    public bool button = false;
-
     private void Start()
     {
         objectManager = ObjectManager.current;
@@ -42,13 +40,5 @@ public class GenericEventTrigger : MonoBehaviour
 
         network.Send(buffer);
     }
-    // Update is called once per frame
-    void Update()
-    {
-        if (button)
-        {
-            Transmit();
-            button = false;
-        }
-    }
+   
 }

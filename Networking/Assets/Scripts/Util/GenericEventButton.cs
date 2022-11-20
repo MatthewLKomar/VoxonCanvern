@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-
+[CustomEditor(typeof(GenericEventTrigger)), CanEditMultipleObjects]
 public class GenericEventButton : Editor
 {
     override public void OnInspectorGUI()
