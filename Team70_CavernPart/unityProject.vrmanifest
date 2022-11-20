@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.caverndemo.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\Demo\\Documents\\GitHub\\VoxonCanvern\\Team70_CavernPart\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "F:\\UnityProject\\VoxonCanvern\\Team70_CavernPart\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "Cavern Demo [Testing]"

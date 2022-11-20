@@ -57,7 +57,8 @@ public class CGameManager : MonoBehaviour
             case 1:
                 return;
             case 2:
-                // TODO: END WORK.
+                StartCoroutine(GameStage2());
+                isInStage = true;
                 break;
             case 0:
                 StartCoroutine(GameStage0());
@@ -70,6 +71,8 @@ public class CGameManager : MonoBehaviour
     // Start the pre game part.
     private IEnumerator GameStage0()
     {
+        LightManager.instance.TurnOnLight(0);
+
         // TODO: wait until the Voxon sends a message tell the game starts.
         while (!Input.GetKey(KeyCode.RightShift))
         {
@@ -80,17 +83,19 @@ public class CGameManager : MonoBehaviour
 
         counterUI.text = "Number of item collected: 0";
 
-
-        GameObject[] artLights = GameObject.FindGameObjectsWithTag("ArtLights");
-
-        foreach(GameObject artLight in artLights)
-        {
-            artLight.GetComponent<Light>().intensity = 10;
-        }
-
+        LightManager.instance.TurnOnLights();
 
         gameStage = 1;
         isInStage = false;
+    }
+
+
+    private IEnumerator GameStage2()
+    {
+        LightManager.instance.ToggleFlashLight(true);
+
+        yield return null;
+
     }
 
 
@@ -108,7 +113,7 @@ public class CGameManager : MonoBehaviour
             return;
         }
 
-        timer -= 1 * Time.deltaTime;                // Update the timer.
+        timer -= 1 * Time.deltaTime;                    // Update the timer.
     }
 
 
