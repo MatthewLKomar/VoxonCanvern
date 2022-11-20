@@ -81,8 +81,9 @@ public class ObjectManager : MonoBehaviour
         string[] commands = json.Split('\n');
         foreach(var command in commands)
         {
+            if (!command.StartsWith("{")) continue; 
+
             Payload buffer = JsonUtility.FromJson<Payload>(command);
-            print(buffer.command);
             switch (buffer.command)
             {
                 case Command.GenericEvent:
