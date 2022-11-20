@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(EventManager))]
 public class ObjectManager : MonoBehaviour
 {
     public static ObjectManager current;
-    public NetworkManager networker; 
-    public bool start = false;
+
+    private NetworkManager networker = NetworkManager.current;
+    private EventManager eventManager; 
     [Tooltip("Objects here will be replicated")]
     public List<GameObject> ObjectsToReplicate = new List<GameObject>();
 
@@ -22,6 +24,8 @@ public class ObjectManager : MonoBehaviour
             current = this;
         }
         else Destroy(gameObject);
+
+        eventManager = GetComponent<EventManager>();
     }
     public void ConfirmNetworkerIsRunning(string text)
     {
@@ -70,45 +74,43 @@ public class ObjectManager : MonoBehaviour
         yield return null;
     }
     
-    private void Update()
-    {
-        if (start)
-        {
-            StartCoroutine(InitializeTrackedObjs());
-            start = false;
-        }
-    }
+
 
     public void ProcessBuffer(string json)
     {
-        Payload buffer = JsonUtility.FromJson<Payload>(json);
-        print(buffer.command);
-        switch (buffer.command)
+        string[] commands = json.Split('\n');
+        foreach(var command in commands)
         {
-            case Command.GenericEvent:
-                CallGenericEvent();
-                break;
-            case Command.Spawn:
-                Spawn(buffer.ObjectName);
-                break;
-            case Command.Parent:
-                var ParentParam = JsonUtility.FromJson<AssignParam>(buffer.Params);
-                Parent(buffer.ObjectName, ParentParam.ParentObj);
-                break;
-            case Command.Move:
-                var MoveParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
-                Move(buffer.ObjectName, MoveParam.vector3);
-                break;
-            case Command.Scale:
-                var ScaleParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
-                Scale(buffer.ObjectName, ScaleParam.vector3);
-                break;
-            case Command.Rotate:
-                var RotationParam = JsonUtility.FromJson<QuaternionParam>(buffer.Params);
-                Rotate(buffer.ObjectName, RotationParam.quaternion);
-                break;
-            default:
-                break;
+            if (!command.StartsWith("{")) continue; 
+
+            Payload buffer = JsonUtility.FromJson<Payload>(command);
+            switch (buffer.command)
+            {
+                case Command.GenericEvent:
+                    CallGenericEvent(buffer.Params);
+                    break;
+                case Command.Spawn:
+                    Spawn(buffer.ObjectName);
+                    break;
+                case Command.Parent:
+                    var ParentParam = JsonUtility.FromJson<AssignParam>(buffer.Params);
+                    Parent(buffer.ObjectName, ParentParam.ParentObj);
+                    break;
+                case Command.Move:
+                    var MoveParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
+                    Move(buffer.ObjectName, MoveParam.vector3);
+                    break;
+                case Command.Scale:
+                    var ScaleParam = JsonUtility.FromJson<Vector3Param>(buffer.Params);
+                    Scale(buffer.ObjectName, ScaleParam.vector3);
+                    break;
+                case Command.Rotate:
+                    var RotationParam = JsonUtility.FromJson<QuaternionParam>(buffer.Params);
+                    Rotate(buffer.ObjectName, RotationParam.quaternion);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -153,10 +155,17 @@ public class ObjectManager : MonoBehaviour
         obj.transform.rotation = quaternion;
     }
 
-    void CallGenericEvent()
+    /* Mkomar says... 
+         The Call Generic Event recieves PayloadParams in JSON format. 
+            It will convert it into a sturct and then it will call a corresponding
+            event from the event manager 
+         The event manager is expected to have the correct ID number inside it,
+         otherwise this call will be ignored and logged into console. 
+    */
+    void CallGenericEvent(string PayloadParams)
     {
-        //Event Manager work here
-        print("TODO: Implement Call Generic Event");
+        EventNameParam ParentParam = JsonUtility.FromJson<EventNameParam>(PayloadParams);
+        eventManager.triggerID(ParentParam.eventID);
     }
 
     Payload CreateEmptyPayload(Command command, GameObject obj)
@@ -167,48 +176,54 @@ public class ObjectManager : MonoBehaviour
         return payload;
     }
 
-    //[Tooltip("Create the JSON buffer to send to the network")]
-    string BuildBufferForGenericEvent(Command command, GameObject obj, string Event)
+    string FormatPayload(Payload payload)
     {
-        var payload = CreateEmptyPayload(command, obj);
-        payload.Params = GenericEventToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return JsonUtility.ToJson(payload) + "\n";
     }
 
-    string BuildBufferVector3(Command command, GameObject obj, Vector3 Event)
+    //[Tooltip("Create the JSON buffer to send to the network")]
+    public string BuildBufferGenericEvent(Command command, GameObject obj, string Event, int ID)
+    {
+        var payload = CreateEmptyPayload(command, obj);
+        payload.Params = GenericEventToJson(Event, ID);
+        return FormatPayload(payload);
+    }
+
+    public string BuildBufferVector3(Command command, GameObject obj, Vector3 Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = Vector3ToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
-    string BuildBufferSpawn(Command command, GameObject obj)
+    public string BuildBufferSpawn(Command command, GameObject obj)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = "";
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
-    string BuildBufferRotation(Command command, GameObject obj, Quaternion Event)
+    public string BuildBufferRotation(Command command, GameObject obj, Quaternion Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = RotateToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
-    string BuildBufferParent(Command command, GameObject obj, string Event)
+    public string BuildBufferParent(Command command, GameObject obj, string Event)
     {
         var payload = CreateEmptyPayload(command, obj);
         payload.Params = ParentToJson(Event);
-        return JsonUtility.ToJson(payload);
+        return FormatPayload(payload);
     }
 
 
 
-    string GenericEventToJson(string Event)
+    string GenericEventToJson(string Event, int ID)
     {
         var GenericEvent = new EventNameParam();
         GenericEvent.EventName = Event;
+        GenericEvent.eventID = ID;
         return JsonUtility.ToJson(GenericEvent);
     }
 

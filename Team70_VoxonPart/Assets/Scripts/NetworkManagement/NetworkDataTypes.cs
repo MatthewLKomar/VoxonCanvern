@@ -18,6 +18,12 @@ public class TCPBase
     {
         return; 
     }
+
+    public IEnumerator ProcessBuffer(string data)
+    {
+        ObjectManager.current.ProcessBuffer(data);
+        yield return null;
+    }
 }
 
 public enum Command
@@ -58,6 +64,7 @@ public struct AssignParam
 public struct EventNameParam
 {
     public string EventName;
+    public int eventID;
 }
 
 [System.Serializable]
@@ -69,7 +76,5 @@ public struct Payload
     public string ObjectName; 
     [Tooltip("Serialized JSON data and its data type will be relative to the command")]
     public string Params;  
-
-
 }
 
