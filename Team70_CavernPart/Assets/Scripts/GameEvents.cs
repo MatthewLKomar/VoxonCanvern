@@ -7,6 +7,8 @@ public class GameEvents : MonoBehaviour
 {
     public static GameEvents instance { private set; get; }
 
+    [HideInInspector]
+    public bool isStart, isEnd = false;
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -20,6 +22,20 @@ public class GameEvents : MonoBehaviour
     }
 
     public event Action<string> onCheckPassword;
+
+    /* Mkomar says... 
+     *  Start experiecne and EndExperience will be triggered via
+     *  UnityEvents in the EventManager 
+     */
+    public void StartExperience()
+    {
+        isStart = true;
+    }
+
+    public void EndExperience()
+    {
+        isEnd = true;
+    }
 
     public void EveCheckPassword(string password)
     {
