@@ -16,6 +16,7 @@ public class CGameManager : MonoBehaviour
     [SerializeField] TextMeshPro counterUI;
 
 
+    
     private void Awake()
     {
         if(instance != null && instance != this)
@@ -59,16 +60,8 @@ public class CGameManager : MonoBehaviour
     }
 
 
-    // Start the pre game part.
-    private IEnumerator GameStage0()
-    {
-        LightManager.instance.TurnOnLight(0);
-
-        while (!Input.GetKey(KeyCode.RightShift) || GameEvents.instance.isStart) //Wait until the Voxon tells the game starts, or manually press the right shift button.
-        {
-            yield return null;              // Wait until the player enters a button.
-        }
-
+    public void StartGame()
+    {            
         ComputerController.instance.SetStartPC(true);           // Enable the input computer.
 
         counterUI.text = "Number of item collected: 0";         // Set the UI.
@@ -77,6 +70,21 @@ public class CGameManager : MonoBehaviour
 
         gameStage = 1;
         isInStage = false;
+        
+    }
+    // Start the pre game part.
+    private IEnumerator GameStage0()
+    {
+        LightManager.instance.TurnOnLight(0);
+        
+        while (!Input.GetKey(KeyCode.RightShift) /*|| !GameEvents.instance.isStart*/) //Wait until the Voxon tells the game starts, or manually press the right shift button.
+        {
+            if (gameStage != 0) yield break; 
+            yield return null;      
+        }
+
+        StartGame();
+        // Wait until the player enters a button.
     }
 
 

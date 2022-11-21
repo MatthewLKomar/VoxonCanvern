@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
+[RequireComponent(typeof(ObjectManager))]
 public class NetworkManager : MonoBehaviour
 {
     public static NetworkManager current;
