@@ -14,8 +14,7 @@ public class CGameManager : MonoBehaviour
 
     [SerializeField] float timer = 300f;        // The total time of this game after started.
     [SerializeField] TextMeshPro counterUI;
-    [SerializeField] Transform trackerloc;
-    
+
 
     private void Awake()
     {
@@ -34,8 +33,6 @@ public class CGameManager : MonoBehaviour
     {
         UpdateStatus();
         UpdateTimer();
-
-        //counterUI.text = trackerloc.position.ToString();
     }
 
 
@@ -86,8 +83,9 @@ public class CGameManager : MonoBehaviour
     private IEnumerator GameStage2()
     {
         LightManager.instance.ToggleFlashLight(true);
-
-        // TODO: Add more audio here.
+        
+        AudioManager.instance.StopBGMSound();
+        AudioManager.instance.PlayAlertSound();
 
         yield return null;
     }
