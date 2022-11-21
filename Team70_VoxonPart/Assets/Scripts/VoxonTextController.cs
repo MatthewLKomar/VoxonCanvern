@@ -4,11 +4,25 @@ using UnityEngine;
 
 public class VoxonTextController : MonoBehaviour
 {
+	public static VoxonTextController instance { private set; get; }
 
 	Voxon.VXTextComponent text;
 	string number = "";						// The current input by the guest.
 	[SerializeField] string password = "ETCOS";                  // The true password.
-	private char[] charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();		// An array of available input char.
+	private char[] charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();       // An array of available input char.
+
+	private void Awake()
+	{
+		if (instance != null && instance != this)
+		{
+			Destroy(this);
+		}
+		else
+		{
+			instance = this;
+		}
+	}
+
 
 	void Start()
 	{
@@ -23,7 +37,7 @@ public class VoxonTextController : MonoBehaviour
 			return;
         }
 
-		if(Voxon.Input.GetKeyDown("Enter") || number.Length > 3)		// If reach limit or is entered.
+		if (Voxon.Input.GetKeyDown("Enter") || number.Length > 3)		// If reach limit or is entered.
         {
 			if(number == password)
             {
@@ -57,5 +71,10 @@ public class VoxonTextController : MonoBehaviour
             }
         }
 
+	}
+
+
+	public void SetText(string newText) {
+		text.text = newText;
 	}
 }

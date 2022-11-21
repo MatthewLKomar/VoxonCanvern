@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class MapController : MonoBehaviour
 {
     public static MapController instance { private set; get; }
 
-    public int hackStatus = 0;              // The status of the game: 0 = not hacked in; 1 = is hacked in; 2 = reach the time limit.                          
+    public int hackStatus = -1;              // The status of the game: 0 = not hacked in; 1 = is hacked in; 2 = reach the time limit.                          
 
     [SerializeField] float timer = 300f;
 
     [SerializeField] Transform magicCube;                  // The actual cube transform
     [SerializeField] VoxonTextController textCon;
     [SerializeField] Voxon.VXTextComponent timerUI;
-    
+    [SerializeField] VideoPlayer videoPlayer;
 
 
     private void Awake()
@@ -31,13 +32,12 @@ public class MapController : MonoBehaviour
 
     void Start()
     {
-
+        StartCoroutine(PlayVideo());
     }
 
 
     void Update()
     {
-        
     }
 
 
@@ -190,5 +190,18 @@ public class MapController : MonoBehaviour
         {
             PlaneController.instance.ChangePlaneList(0);
         }
+    }
+
+
+    private IEnumerator PlayVideo()
+    {
+        yield return new WaitForSeconds(5);
+
+        videoPlayer.Play();
+
+        yield return new WaitForSeconds(17);
+
+        VoxonTextController.instance.SetText("Password: ");
+        hackStatus = 0;
     }
 }
