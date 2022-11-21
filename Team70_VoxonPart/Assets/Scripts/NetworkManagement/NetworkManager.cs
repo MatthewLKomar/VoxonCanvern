@@ -34,7 +34,8 @@ public class NetworkManager : MonoBehaviour
 
     private IEnumerator PrintDisplay(string text)
     {
-        DisplayOut.text = text;
+        if (DisplayOut != null)
+            DisplayOut.text = text;
         print(text);
         yield return null;
     }
@@ -54,8 +55,6 @@ public class NetworkManager : MonoBehaviour
         }
 
     }
-
-
 
     public void Send(string text)
     {

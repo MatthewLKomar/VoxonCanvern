@@ -62,6 +62,8 @@ public class TCPClient : TCPBase
                             NetworkerPrint("Server died, client shutting down");
                             Close();
                         }
+                        UnityMainThreadDispatcher.Instance().Enqueue(ProcessBuffer(response));
+
                     }
                 }
             }
