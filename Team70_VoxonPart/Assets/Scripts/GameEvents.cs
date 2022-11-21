@@ -33,16 +33,6 @@ public class GameEvents : MonoBehaviour
     }
 
 
-    public event Action<bool> onSetActiveCube;
-
-    public void EveSetActiveCube(bool newState)
-    {
-        if(onSetActiveCube != null)
-        {
-            onSetActiveCube(newState);
-        }
-    }
-
     //Mkomar says
     // probably a better way of making these more generic/designer accessible but thats ok for now
     public void StartExperience()

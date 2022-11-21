@@ -10,13 +10,13 @@ public class CGameManager : MonoBehaviour
 
     private int gameStage = 0;          // 0 = before game, 1 = in game, 2 = end game.
     private bool isInStage = false;
+    private int nItemCollected = 0;             // The number of item collected.
 
-    private float timer = 300f;
-    private int nItemCollected = 0;
-
+    [SerializeField] float timer = 300f;        // The total time of this game after started.
     [SerializeField] TextMeshPro counterUI;
     [SerializeField] Transform trackerloc;
     
+
     private void Awake()
     {
         if(instance != null && instance != this)
@@ -29,19 +29,13 @@ public class CGameManager : MonoBehaviour
         }
     }
 
-
-    void Start()
-    {
-        
-    }
-
     
     void Update()
     {
         UpdateStatus();
         UpdateTimer();
 
-        counterUI.text = trackerloc.position.ToString();
+        //counterUI.text = trackerloc.position.ToString();
     }
 
 
@@ -54,12 +48,13 @@ public class CGameManager : MonoBehaviour
 
         switch (gameStage)
         {
-            case 1:
+            case 1:                         // If it's in game.
                 return;
-            case 2:
-                // TODO: END WORK.
+            case 2:                         // If after the game.
+                StartCoroutine(GameStage2());
+                isInStage = true;
                 break;
-            case 0:
+            case 0:                        // If before the game.
                 StartCoroutine(GameStage0());
                 isInStage = true;
                 break;
@@ -70,27 +65,31 @@ public class CGameManager : MonoBehaviour
     // Start the pre game part.
     private IEnumerator GameStage0()
     {
-        // TODO: wait until the Voxon sends a message tell the game starts.
-        while (!Input.GetKey(KeyCode.RightShift))
+        LightManager.instance.TurnOnLight(0);
+
+        while (!Input.GetKey(KeyCode.RightShift) || GameEvents.instance.isStart) //Wait until the Voxon tells the game starts, or manually press the right shift button.
         {
             yield return null;              // Wait until the player enters a button.
         }
 
         ComputerController.instance.SetStartPC(true);           // Enable the input computer.
 
-        counterUI.text = "Number of item collected: 0";
+        counterUI.text = "Number of item collected: 0";         // Set the UI.
 
-
-        GameObject[] artLights = GameObject.FindGameObjectsWithTag("ArtLights");
-
-        foreach(GameObject artLight in artLights)
-        {
-            artLight.GetComponent<Light>().intensity = 10;
-        }
-
+        LightManager.instance.TurnOnLights();
 
         gameStage = 1;
         isInStage = false;
+    }
+
+
+    private IEnumerator GameStage2()
+    {
+        LightManager.instance.ToggleFlashLight(true);
+
+        // TODO: Add more audio here.
+
+        yield return null;
     }
 
 
@@ -101,14 +100,14 @@ public class CGameManager : MonoBehaviour
             return;
         }
 
-        if (timer <= 0)
+        if (timer <= 0 || GameEvents.instance.isEnd)
         {
             gameStage = 2;
             isInStage = false;
             return;
         }
 
-        timer -= 1 * Time.deltaTime;                // Update the timer.
+        timer -= 1 * Time.deltaTime;                    // Update the timer.
     }
 
 

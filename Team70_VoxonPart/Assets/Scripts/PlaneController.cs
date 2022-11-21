@@ -36,7 +36,7 @@ public class PlaneController : MonoBehaviour
 
     public void ChangePlaneList(int index)
     {
-        planeList[currIndex].transform.position = new Vector3(0,-10f,0);
+        planeList[currIndex].transform.position = new Vector3(0,-10f,0);        // Move the old plane away, replace it with a new one.
         planeList[index].transform.position = new Vector3(0, -1.5f, 0);
 
         currIndex = index;

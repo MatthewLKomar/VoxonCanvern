@@ -6,11 +6,11 @@ public class MapController : MonoBehaviour
 {
     public static MapController instance { private set; get; }
 
-    public int hackStatus = 0;
+    public int hackStatus = 0;              // The status of the game: 0 = not hacked in; 1 = is hacked in; 2 = reach the time limit.                          
 
-    private float timer = 300f;
+    [SerializeField] float timer = 300f;
 
-    [SerializeField] GameObject magicCube;                  // The actual cube object
+    [SerializeField] Transform magicCube;                  // The actual cube transform
     [SerializeField] VoxonTextController textCon;
     [SerializeField] Voxon.VXTextComponent timerUI;
     
@@ -31,7 +31,7 @@ public class MapController : MonoBehaviour
 
     void Start()
     {
-        GameEvents.instance.onSetActiveCube += SetActiveCube;       // Add the function to the event.
+
     }
 
 
@@ -56,38 +56,32 @@ public class MapController : MonoBehaviour
             return;
         }
 
-
-        Vector3 worldRot = magicCube.transform.rotation.eulerAngles;
-
-        if (Voxon.Input.GetKey("rotate_Left_x"))          // Rotate the cube horizontally.
+        if (Voxon.Input.GetKey("rotate_Left_x"))          // Rotate the cube along x.
         {
-            worldRot.x += 1f;
+            magicCube.Rotate(-Vector3.left * 1.5f);
         }
         if (Voxon.Input.GetKey("rotate_Right_x"))
         {
-            worldRot.x -= 1f;
+            magicCube.Rotate(Vector3.left * 1.5f);
         }
 
-        if (Voxon.Input.GetKey("rotate_Left_y"))          // Rotate the cube horizontally.
+        if (Voxon.Input.GetKey("rotate_Left_y"))          // Rotate the cube along z.
         {
-            worldRot.y += 1f;
+            magicCube.Rotate(Vector3.forward * 1.5f);
         }
         if (Voxon.Input.GetKey("rotate_Right_y"))
         {
-            worldRot.y -= 1f;
+            magicCube.Rotate(-Vector3.forward * 1.5f);
         }
 
-
-        if (Voxon.Input.GetKey("rotate_Left_z"))          // Rotate the cube horizontally.
+        if (Voxon.Input.GetKey("rotate_Left_z"))          // Rotate the cube along y.
         {
-            worldRot.z += 1f;
+            magicCube.Rotate(Vector3.up * 1.5f);
         }
         if (Voxon.Input.GetKey("rotate_Right_z"))
         {
-            worldRot.z -= 1f;
+            magicCube.Rotate(-Vector3.up * 1.5f);
         }
-
-        magicCube.transform.rotation = Quaternion.Euler(worldRot);
 
         UpdatePlane();
     }
@@ -95,15 +89,14 @@ public class MapController : MonoBehaviour
 
     public void UpdateTimer()
     {
-        if(timer <= 0)
+        if(timer <= 0)                      // If reaches the time limit.
         {
             SetActiveCube(false);
             timerUI.text = "";
             return;
         }
 
-
-        if (hackStatus == 1)
+        if (hackStatus == 1)                // If is in the counting.
         {
             timer -= 1 * Time.deltaTime;
             if (timer >= 0)
@@ -118,16 +111,18 @@ public class MapController : MonoBehaviour
     {
         if (newStatus)
         {
-            magicCube.transform.position = new Vector3(0, 0.4f, 0);            // Move it to the center.
+            magicCube.position = new Vector3(0, 0.4f, 0);            // Move it to the center.
             AudioManager.instance.PlayActivateSound(0);
             instance.hackStatus = 1;
-            // TODO: Pass data to Cavern notifying the timer starts counting down.
+            GameEvents.instance.StartExperience();                          // Pass data to Cavern notifying the timer starts counting down.
         }
         else
         {
-            magicCube.transform.position = new Vector3(0, 5.4f, 0);            // Move it to the center.
+            magicCube.position = new Vector3(0, 5.4f, 0);            // Move it away.
             PlaneController.instance.ChangePlaneList(0);
             instance.hackStatus = 2;
+
+            GameEvents.instance.EndExperience();
             // TODO: Add audio about ending.
         }
     }
@@ -135,58 +130,58 @@ public class MapController : MonoBehaviour
 
     public void UpdatePlane()
     {
-        Vector3 degree = magicCube.transform.rotation.eulerAngles;
+        Vector3 degree = magicCube.rotation.eulerAngles;
 
         float x_mod = degree.x % 360f;
         float z_mod = degree.z % 360f;
 
         bool findMatch = false;
 
-        if (x_mod < 20 || x_mod > 340)
+        if (x_mod < 30 || x_mod > 330)
         {
-            if (z_mod < 20 || z_mod > 340)
+            if (z_mod < 30 || z_mod > 330)
             {
                 // White
                 PlaneController.instance.ChangePlaneList(3);
                 findMatch = true;
             }
-            else if (z_mod < 200 && z_mod > 160)
+            else if (z_mod < 210 && z_mod > 150)
             {
                 // Green
                 PlaneController.instance.ChangePlaneList(2);
                 findMatch = true;
             }
-            else if (z_mod < 110 && z_mod > 70)
+            else if (z_mod < 120 && z_mod > 60)
             {
                 // Blue
                 PlaneController.instance.ChangePlaneList(4);
                 findMatch = true;
             }
-            else if (z_mod < 290 && z_mod > 250)
+            else if (z_mod < 300 && z_mod > 240)
             {
                 // Red
                 PlaneController.instance.ChangePlaneList(1);
                 findMatch = true;
             }
         }
-        else if (z_mod < 20 || z_mod > 340)
+        else if (x_mod < 120 && x_mod > 60)
         {
-            if (x_mod < 200 && x_mod > 160)
+            // Orange
+            PlaneController.instance.ChangePlaneList(5);
+            findMatch = true;
+        }
+        else if (x_mod < 300 && x_mod > 240)
+        {
+            // Yellow
+            PlaneController.instance.ChangePlaneList(6);
+            findMatch = true;
+        }
+        else if (z_mod < 30 || z_mod > 330)
+        {
+            if (x_mod < 210 && x_mod > 150)
             {
                 // Green
                 PlaneController.instance.ChangePlaneList(2);
-                findMatch = true;
-            }
-            else if (x_mod < 110 && x_mod > 70)
-            {
-                // Orange
-                PlaneController.instance.ChangePlaneList(5);
-                findMatch = true;
-            }
-            else if (x_mod < 290 && x_mod > 250)
-            {
-                // Yellow
-                PlaneController.instance.ChangePlaneList(6);
                 findMatch = true;
             }
         }

@@ -20,7 +20,7 @@ public class TagTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("FlashLightT"))
+        if (other.CompareTag("FlashLightT"))            // If triggered by the flashlight.
         {
             artTag.SetActive(true);
         }
@@ -29,7 +29,7 @@ public class TagTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("FlashLightT"))
+        if (other.CompareTag("FlashLightT"))            // If the flashlight left.
         {
             artTag.SetActive(false);
         }

@@ -34,7 +34,7 @@ public class AudioManager : MonoBehaviour
     }
 
 
-    public void PlayActivateSound(int index)
+    public void PlayActivateSound(int index)            // Play the audio in the list based on the index.
     {
         if (audioSource.isPlaying)
         {
