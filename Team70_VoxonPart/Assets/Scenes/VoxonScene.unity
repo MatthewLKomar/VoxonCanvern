@@ -2279,7 +2279,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hackStatus: -1
-  timer: 465
+  timer: 455
   magicCube: {fileID: 396105224}
   textCon: {fileID: 2108790417}
   timerUI: {fileID: 1094332987}
