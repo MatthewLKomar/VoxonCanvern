@@ -8,7 +8,7 @@ public class VoxonTextController : MonoBehaviour
 	Voxon.VXTextComponent text;
 	string number = "";						// The current input by the guest.
 	[SerializeField] string password = "ETCOS";                  // The true password.
-	private char[] charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+	private char[] charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();		// An array of available input char.
 
 	void Start()
 	{
@@ -18,17 +18,17 @@ public class VoxonTextController : MonoBehaviour
 
 	void Update()
 	{
-        if (MapController.instance.hackStatus != 0)
+        if (MapController.instance.hackStatus != 0)				// If not started.
         {
 			return;
         }
 
-		if(Voxon.Input.GetKeyDown("Enter") || number.Length > 3)
+		if(Voxon.Input.GetKeyDown("Enter") || number.Length > 3)		// If reach limit or is entered.
         {
 			if(number == password)
             {
 				text.text = "";					// Password matched.
-				GameEvents.instance.EveSetActiveCube(true);
+				MapController.instance.SetActiveCube(true);
 			}
             else
             {
@@ -41,16 +41,16 @@ public class VoxonTextController : MonoBehaviour
         {
 			foreach(char charK in charList)
             {
-                if (Voxon.Input.GetKeyDown(charK.ToString()))		// If there's an input match.
+                if (Voxon.Input.GetKeyDown(charK.ToString()))		// If there's a char in the array matches to the user's input.
                 {
-					if (text.text[0] != 'P')
+					if (text.text[0] != 'P')							// If the current text is not Password: xxx
 					{
 						text.text = "Password: " + charK.ToString();
 
 					}
 					else
 					{
-						text.text += charK.ToString();                  // Add it to the number.
+						text.text += charK.ToString();                  // Add it to the button of the text.
 					}
 					number += charK.ToString();
 				}
