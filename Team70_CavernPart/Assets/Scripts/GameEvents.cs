@@ -21,8 +21,6 @@ public class GameEvents : MonoBehaviour
         }
     }
 
-    public event Action<string> onCheckPassword;
-
     /* Mkomar says... 
      *  Start experiecne and EndExperience will be triggered via
      *  UnityEvents in the EventManager 
@@ -37,6 +35,9 @@ public class GameEvents : MonoBehaviour
         isEnd = true;
     }
 
+
+
+    public event Action<string> onCheckPassword;
     public void EveCheckPassword(string password)
     {
         if(onCheckPassword != null)

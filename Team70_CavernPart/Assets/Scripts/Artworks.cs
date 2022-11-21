@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Artworks : MonoBehaviour
 {
-    [SerializeField] int id;
-    [SerializeField] string password;
+    [SerializeField] int id;                // The id of the artwork.
+    [SerializeField] string password;       // The password to open 
 
-    private bool isLocked = true;
+    private bool isLocked = true;           // Check if the artwork is stole.
 
     void Start()
     {
@@ -17,7 +17,7 @@ public class Artworks : MonoBehaviour
 
     public string GetPassword()
     {
-        return password;
+        return password;                    // Get the password of that artwork.
     }
 
 
@@ -32,12 +32,10 @@ public class Artworks : MonoBehaviour
 
         if (!isLocked)
         {
-            return;
+            return;                                     // If it's already stole.
         }
 
-        CGameManager.instance.IncreItemCollected();
-
-        Debug.LogWarning(id + " is unlocked");
+        CGameManager.instance.IncreItemCollected();             // Increment the number of item collected.
 
         isLocked = false;
 
