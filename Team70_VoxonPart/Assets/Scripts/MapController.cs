@@ -199,8 +199,13 @@ public class MapController : MonoBehaviour
 
     private IEnumerator PlayVideo()
     {
-        yield return new WaitForSeconds(10);
+        while (!Voxon.Input.GetKeyDown("Enter"))
+        {
+            yield return null;
+        }
 
+        VoxonTextController.instance.SetText("");
+        
         VideoManager.instance.PlayVideo(0);
 
         yield return new WaitForSeconds(17);

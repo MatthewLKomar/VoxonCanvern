@@ -2087,7 +2087,7 @@ MonoBehaviour:
   pd: {x: 0, y: 0.5, z: 0}
   pp: {x: -0.75, y: 0.5, z: 0}
   color: 16777215
-  text: 
+  text: Press Enter
   forceUpdatePerFrame: 1
 --- !u!4 &2108790419
 Transform:
