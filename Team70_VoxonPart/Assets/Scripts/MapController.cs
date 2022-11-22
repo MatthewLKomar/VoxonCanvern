@@ -9,12 +9,11 @@ public class MapController : MonoBehaviour
 
     public int hackStatus = -1;              // The status of the game: 0 = not hacked in; 1 = is hacked in; 2 = reach the time limit.                          
 
-    [SerializeField] float timer = 300f;
+    [SerializeField] float timer;
 
     [SerializeField] Transform magicCube;                  // The actual cube transform
     [SerializeField] VoxonTextController textCon;
     [SerializeField] Voxon.VXTextComponent timerUI;
-    [SerializeField] VideoPlayer videoPlayer;
 
 
     private void Awake()
@@ -89,10 +88,11 @@ public class MapController : MonoBehaviour
 
     public void UpdateTimer()
     {
-        if(timer <= 0)                      // If reaches the time limit.
+        if(timer <= 0 && hackStatus == 1)                      // If reaches the time limit.
         {
             SetActiveCube(false);
             timerUI.text = "";
+            hackStatus = 2;
             return;
         }
 
@@ -124,6 +124,10 @@ public class MapController : MonoBehaviour
 
             GameEvents.instance.EndExperience();
             // TODO: Add audio about ending.
+            
+            VideoManager.instance.PlayVideo(1);
+            
+            
         }
     }
 
@@ -195,11 +199,13 @@ public class MapController : MonoBehaviour
 
     private IEnumerator PlayVideo()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(10);
 
-        videoPlayer.Play();
+        VideoManager.instance.PlayVideo(0);
 
         yield return new WaitForSeconds(17);
+        
+        VideoManager.instance.StopVideo(0);
 
         VoxonTextController.instance.SetText("Password: ");
         hackStatus = 0;
