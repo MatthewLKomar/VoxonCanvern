@@ -1,19 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class MapController : MonoBehaviour
 {
     public static MapController instance { private set; get; }
 
-    public int hackStatus = 0;              // The status of the game: 0 = not hacked in; 1 = is hacked in; 2 = reach the time limit.                          
+    public int hackStatus = -1;              // The status of the game: 0 = not hacked in; 1 = is hacked in; 2 = reach the time limit.                          
 
-    [SerializeField] float timer = 300f;
+    [SerializeField] float timer;
 
     [SerializeField] Transform magicCube;                  // The actual cube transform
     [SerializeField] VoxonTextController textCon;
     [SerializeField] Voxon.VXTextComponent timerUI;
-    
 
 
     private void Awake()
@@ -31,13 +31,12 @@ public class MapController : MonoBehaviour
 
     void Start()
     {
-
+        StartCoroutine(PlayVideo());
     }
 
 
     void Update()
     {
-        
     }
 
 
@@ -89,10 +88,11 @@ public class MapController : MonoBehaviour
 
     public void UpdateTimer()
     {
-        if(timer <= 0)                      // If reaches the time limit.
+        if(timer <= 0 && hackStatus == 1)                      // If reaches the time limit.
         {
             SetActiveCube(false);
             timerUI.text = "";
+            hackStatus = 2;
             return;
         }
 
@@ -124,6 +124,10 @@ public class MapController : MonoBehaviour
 
             GameEvents.instance.EndExperience();
             // TODO: Add audio about ending.
+            
+            VideoManager.instance.PlayVideo(1);
+            
+            
         }
     }
 
@@ -190,5 +194,25 @@ public class MapController : MonoBehaviour
         {
             PlaneController.instance.ChangePlaneList(0);
         }
+    }
+
+
+    private IEnumerator PlayVideo()
+    {
+        while (!Voxon.Input.GetKeyDown("Enter"))
+        {
+            yield return null;
+        }
+
+        VoxonTextController.instance.SetText("");
+        
+        VideoManager.instance.PlayVideo(0);
+
+        yield return new WaitForSeconds(17);
+        
+        VideoManager.instance.StopVideo(0);
+
+        VoxonTextController.instance.SetText("Password: ");
+        hackStatus = 0;
     }
 }
