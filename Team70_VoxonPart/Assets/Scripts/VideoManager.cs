@@ -7,8 +7,10 @@ public class VideoManager : MonoBehaviour
 {
     public static VideoManager instance { private set; get; }
 
-    [SerializeField] GameObject videoplayer0;
-    [SerializeField] GameObject videoplayer1;
+    [SerializeField] GameObject videoPlane;
+    [SerializeField] List<VideoClip> videoClips;
+    //[SerializeField] GameObject videoplayer0;
+    //[SerializeField] GameObject videoplayer1;
     
     private void Awake()
     {
@@ -25,34 +27,34 @@ public class VideoManager : MonoBehaviour
 
     public void PlayVideo(int index)
     {
-        if (index == 0)
+        if(videoPlane.activeSelf == false)
         {
-            StopVideo(1);
-            videoplayer0.transform.position = new Vector3(0, 0, 0);
-            videoplayer0.GetComponent<VideoPlayer>().Play();
+            videoPlane.SetActive(true);
         }
-        else
+
+        VideoPlayer vp = videoPlane.GetComponent<VideoPlayer>();
+        if (vp.isPlaying)
         {
-            StopVideo(0);
-            videoplayer1.transform.position = new Vector3(0, 0, 0);
-            videoplayer1.GetComponent<VideoPlayer>().Play();
+            vp.Stop();
         }
+        vp.clip = videoClips[index];
+        vp.Play();
     }
 
 
-    public void StopVideo(int index)
+    public void StopVideo()
     {
-        transform.position = new Vector3(0, -10f, 0);
-        
-        if (index == 0)
+        VideoPlayer vp = videoPlane.GetComponent<VideoPlayer>();
+        if(vp == null)
         {
-            videoplayer0.transform.position = new Vector3(0, -10f, 0);
-            videoplayer0.GetComponent<VideoPlayer>().Stop();
+            return;
         }
-        else
+
+        if (vp.isPlaying)
         {
-            videoplayer1.transform.position = new Vector3(0, -10f, 0);
-            videoplayer1.GetComponent<VideoPlayer>().Stop();
+            vp.Stop();
         }
+
+        videoPlane.SetActive(false);
     }
 }

@@ -7,7 +7,7 @@ public class PlaneController : MonoBehaviour
     public static PlaneController instance { private set; get; }
 
     [SerializeField] List<GameObject> planeList;
-    private int currIndex = 0;
+    private int currIndex = -1;
 
     private void Awake()
     {
@@ -36,8 +36,18 @@ public class PlaneController : MonoBehaviour
 
     public void ChangePlaneList(int index)
     {
-        planeList[currIndex].transform.position = new Vector3(0,-10f,0);        // Move the old plane away, replace it with a new one.
-        planeList[index].transform.position = new Vector3(0, -1.5f, 0);
+        if(currIndex != -1)
+        {
+            planeList[currIndex].SetActive(false);
+            currIndex = -1;
+        }
+
+        if(index == -1)
+        {
+            return;
+        }
+
+        planeList[index].SetActive(true);
 
         currIndex = index;
     }

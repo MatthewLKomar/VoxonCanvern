@@ -22,17 +22,6 @@ public class GameEvents : MonoBehaviour
     }
 
 
-    public event Action<int, Vector3> onUpdatePos;
-
-    public void EveUpdatePos(int id, Vector3 newPos)
-    {
-        if(onUpdatePos != null)
-        {
-            onUpdatePos(id, newPos);
-        }
-    }
-
-
     //Mkomar says
     // probably a better way of making these more generic/designer accessible but thats ok for now
     public void StartExperience()
