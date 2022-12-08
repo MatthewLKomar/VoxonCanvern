@@ -6,9 +6,11 @@ public class TagTrigger : MonoBehaviour
 {
     [SerializeField] GameObject artTag;
     [SerializeField] private int id;
+    
 
     void Start()
     {
+        
         PuzzleVisibility.instance.AddClue(id);
     }
 

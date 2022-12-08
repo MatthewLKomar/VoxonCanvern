@@ -15,7 +15,7 @@ public class CGameManager : MonoBehaviour
     [SerializeField] float timer = 300f;        // The total time of this game after started.
     //[SerializeField] TextMeshPro counterUI;
     //[SerializeField] TextMeshPro titleUI;
-
+    private float ftimer = 300f;
 
     
     private void Awake()
@@ -35,6 +35,9 @@ public class CGameManager : MonoBehaviour
     {
         UpdateStatus();
         UpdateTimer();
+
+        UpdatePuzzVisib();
+        
     }
 
 
@@ -65,9 +68,6 @@ public class CGameManager : MonoBehaviour
     {            
         ComputerController.instance.SetStartPC(true);           // Enable the input computer.
 
-       // counterUI.text = "Number of item stole: 0";         // Set the UI.
-       // titleUI.text = "Auction House hacked";
-       
         SecondDisplay.instance.SetItemUI("Number of locks opened: 0");
 
         LightManager.instance.TurnOnLights();
@@ -119,6 +119,38 @@ public class CGameManager : MonoBehaviour
         }
 
         timer -= 1 * Time.deltaTime;                    // Update the timer.
+    }
+
+
+    private void UpdatePuzzVisib()
+    {
+        if (gameStage != 1)
+        {
+            return;
+        }
+
+        string transmitStr = PuzzleVisibility.instance.outputString;
+
+        int numberCount = (int)char.GetNumericValue(transmitStr[0]);
+        int numberOne = -1;
+        int numberTwo = -1;
+
+        if (numberCount == 1)
+        {
+            numberOne =  (int)char.GetNumericValue(transmitStr[1]);
+        }
+        else if (numberCount == 2)
+        {
+            numberTwo = (int)char.GetNumericValue(transmitStr[2]);
+        }
+        
+        
+        if (Mathf.Floor(timer) != ftimer)
+        {
+            //NetworkManager.current.Send( ObjectManager.current.BuildBufferPuzzleVisibile(2, 1, 1));
+            NetworkManager.current.Send( ObjectManager.current.BuildBufferPuzzleVisibile(numberCount, numberOne, numberTwo));
+            ftimer = Mathf.Floor(timer);
+        }
     }
 
 

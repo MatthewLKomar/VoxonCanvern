@@ -9,7 +9,7 @@ public class PuzzleVisibility : MonoBehaviour
     
     public static PuzzleVisibility instance { private set; get; }
 
-    private Dictionary<int, bool> clueDict;
+    private Dictionary<int, bool> clueDict = new Dictionary<int, bool>();
 
     public string outputString = "";
 
@@ -42,7 +42,7 @@ public class PuzzleVisibility : MonoBehaviour
     {
         int numShowing = 0;
         outputString = "";
-
+        
         foreach (KeyValuePair<int,bool> clue in clueDict)
         {
             if (clue.Value == true)
