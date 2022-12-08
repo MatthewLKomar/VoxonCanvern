@@ -39,7 +39,9 @@ public enum Command
     [Tooltip("Will scale the object")]
     Scale,
     [Tooltip("Will rotate the object to a provided value")]
-    Rotate
+    Rotate,
+    [Tooltip("Describes puzzles visible in format : amount of puzzles shown and then ID of them")]
+    PuzzlesVisible
 }
 
 [System.Serializable]
@@ -53,6 +55,15 @@ public struct QuaternionParam
 {
     public Quaternion quaternion;
 }
+
+[System.Serializable]
+public struct VisiblePuzzles
+{
+    public int numberOfVisiblePuzzles;
+    public int puzzleID1;
+    public int puzzleID2;
+}
+
 
 [System.Serializable]
 public struct AssignParam

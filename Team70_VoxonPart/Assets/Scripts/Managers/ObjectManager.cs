@@ -1,7 +1,14 @@
 using System.Collections;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+/*
+ * MKomar Says... for the future, instead of hardcoding functions here do these through 
+ * delegate events and a function elsewhere can bind to this and listen to it. 
+ * 
+ * So if you have multiple listeners they each can choose what to implement!
+ */
+
 
 [RequireComponent(typeof(EventManager))]
 public class ObjectManager : MonoBehaviour
@@ -75,7 +82,10 @@ public class ObjectManager : MonoBehaviour
     }
     
 
-
+    /*
+        Takes in a param: json
+        triggers functions based on the commands inside the json
+     */ 
     public void ProcessBuffer(string json)
     {
         string[] commands = json.Split('\n');
@@ -108,10 +118,24 @@ public class ObjectManager : MonoBehaviour
                     var RotationParam = JsonUtility.FromJson<QuaternionParam>(buffer.Params);
                     Rotate(buffer.ObjectName, RotationParam.quaternion);
                     break;
+                case Command.PuzzlesVisible:
+                    var PuzzleVisibleParam = JsonUtility.FromJson<VisiblePuzzles>(buffer.Params);
+                    VisualizeVisiblePuzzles(PuzzleVisibleParam);
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+    void VisualizeVisiblePuzzles(VisiblePuzzles visiblePuzzles)
+    {
+        //TODO: Implementation
+        //MLKomar says... 
+        /*
+         * This can be entirely hard coded where you can tag parts of the cube into an array
+         * Then just trigger them to be lit
+         */
     }
 
     void Spawn(string ObjName)
@@ -168,11 +192,11 @@ public class ObjectManager : MonoBehaviour
         eventManager.triggerID(ParentParam.eventID);
     }
 
-    Payload CreateEmptyPayload(Command command, GameObject obj)
+    Payload CreateEmptyPayload(Command command, string objName)
     {
         var payload = new Payload();
         payload.command = command;
-        payload.ObjectName = obj.name;
+        payload.ObjectName = objName;
         return payload;
     }
 
@@ -184,35 +208,50 @@ public class ObjectManager : MonoBehaviour
     //[Tooltip("Create the JSON buffer to send to the network")]
     public string BuildBufferGenericEvent(Command command, GameObject obj, string Event, int ID)
     {
-        var payload = CreateEmptyPayload(command, obj);
+        var payload = CreateEmptyPayload(command, obj.name);
         payload.Params = GenericEventToJson(Event, ID);
         return FormatPayload(payload);
     }
 
     public string BuildBufferVector3(Command command, GameObject obj, Vector3 Event)
     {
-        var payload = CreateEmptyPayload(command, obj);
+        var payload = CreateEmptyPayload(command, obj.name);
         payload.Params = Vector3ToJson(Event);
         return FormatPayload(payload);
     }
 
+    string PuzzleVisibleToJson(int PuzzleVisible, int Puzzle1, int Puzzle2)
+    {
+        VisiblePuzzles visiblePuzzles = new VisiblePuzzles();
+        visiblePuzzles.puzzleID1 = Puzzle1;
+        visiblePuzzles.puzzleID2 = Puzzle2;
+        visiblePuzzles.numberOfVisiblePuzzles = PuzzleVisible;
+
+        return JsonUtility.ToJson(visiblePuzzles);
+    }
+    public string BuildBufferPuzzleVisibile(int PuzzleVisible, int Puzzle1, int Puzzle2)
+    {
+        var payload = CreateEmptyPayload(Command.PuzzlesVisible, "Puzzle");
+        payload.Params = PuzzleVisibleToJson(PuzzleVisible, Puzzle1, Puzzle2);
+        return FormatPayload(payload);
+    }
     public string BuildBufferSpawn(Command command, GameObject obj)
     {
-        var payload = CreateEmptyPayload(command, obj);
+        var payload = CreateEmptyPayload(command, obj.name);
         payload.Params = "";
         return FormatPayload(payload);
     }
 
     public string BuildBufferRotation(Command command, GameObject obj, Quaternion Event)
     {
-        var payload = CreateEmptyPayload(command, obj);
+        var payload = CreateEmptyPayload(command, obj.name);
         payload.Params = RotateToJson(Event);
         return FormatPayload(payload);
     }
 
     public string BuildBufferParent(Command command, GameObject obj, string Event)
     {
-        var payload = CreateEmptyPayload(command, obj);
+        var payload = CreateEmptyPayload(command, obj.name);
         payload.Params = ParentToJson(Event);
         return FormatPayload(payload);
     }
