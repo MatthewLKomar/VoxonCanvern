@@ -34,8 +34,7 @@ public class NetworkManager : MonoBehaviour
 
     private IEnumerator PrintDisplay(string text)
     {
-        if (DisplayOut != null)
-            DisplayOut.text = text;
+        //DisplayOut.text = text;
         print(text);
         yield return null;
     }
