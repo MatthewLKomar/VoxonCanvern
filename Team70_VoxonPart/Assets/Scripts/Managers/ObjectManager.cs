@@ -94,6 +94,7 @@ public class ObjectManager : MonoBehaviour
             if (!command.StartsWith("{")) continue; 
 
             Payload buffer = JsonUtility.FromJson<Payload>(command);
+           
             switch (buffer.command)
             {
                 case Command.GenericEvent:
