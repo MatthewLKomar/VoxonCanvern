@@ -43,4 +43,10 @@ public class AudioManager : MonoBehaviour
 
         audioSource.PlayOneShot(audioList[index]);
     }
+
+
+    public bool isPlaying()
+    {
+        return audioSource.isPlaying;
+    }
 }

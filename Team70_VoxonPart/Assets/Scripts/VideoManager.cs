@@ -9,8 +9,6 @@ public class VideoManager : MonoBehaviour
 
     [SerializeField] GameObject videoPlane;
     [SerializeField] List<VideoClip> videoClips;
-    //[SerializeField] GameObject videoplayer0;
-    //[SerializeField] GameObject videoplayer1;
     
     private void Awake()
     {
@@ -25,10 +23,11 @@ public class VideoManager : MonoBehaviour
     }
     
 
-    public void PlayVideo(int index)
+    public void PlayVideo(int index, bool isLoop)
     {
         if(videoPlane.activeSelf == false)
         {
+            videoPlane.GetComponent<VideoPlayer>().targetTexture.Release();
             videoPlane.SetActive(true);
         }
 
@@ -38,6 +37,7 @@ public class VideoManager : MonoBehaviour
             vp.Stop();
         }
         vp.clip = videoClips[index];
+        vp.isLooping = isLoop;
         vp.Play();
     }
 

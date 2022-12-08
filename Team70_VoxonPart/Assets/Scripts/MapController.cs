@@ -10,7 +10,8 @@ public class MapController : MonoBehaviour
 
     public int hackStatus = -1;              // The status of the game: 0 = not hacked in; 1 = is hacked in; 2 = reach the time limit.                          
 
-    [SerializeField] float timer;
+    [SerializeField] float maxTimer;
+    private float timer;
 
     [SerializeField] GameObject magicCube;                  // The actual cube transform
     [SerializeField] VoxonTextController textCon;
@@ -33,6 +34,7 @@ public class MapController : MonoBehaviour
     void Start()
     {
         StartCoroutine(PlayVideo());
+        timer = maxTimer;
     }
 
 
@@ -56,29 +58,29 @@ public class MapController : MonoBehaviour
             return;
         }
 
-        if (Input.GetKey(KeyCode.A))          // Rotate the cube along x.
+        if (Input.GetKey(KeyCode.W))          // Rotate the cube along x.
         {
             magicCube.transform.Rotate(-Vector3.left * 1.5f);
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.S))
         {
             magicCube.transform.Rotate(Vector3.left * 1.5f);
         }
 
-        if (Input.GetKey(KeyCode.Q))          // Rotate the cube along z.
+        if (Input.GetKey(KeyCode.A))          // Rotate the cube along z.
         {
             magicCube.transform.Rotate(Vector3.forward * 1.5f);
         }
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.D))
         {
             magicCube.transform.Rotate(-Vector3.forward * 1.5f);
         }
 
-        if (Input.GetKey(KeyCode.W))          // Rotate the cube along y.
+        if (Input.GetKey(KeyCode.E))          // Rotate the cube along y.
         {
             magicCube.transform.Rotate(Vector3.up * 1.5f);
         }
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.Q))
         {
             magicCube.transform.Rotate(-Vector3.up * 1.5f);
         }
@@ -103,6 +105,12 @@ public class MapController : MonoBehaviour
             if (timer >= 0)
             {
                 timerUI.text = Mathf.Floor(timer).ToString();
+
+                if(Mathf.Floor(timer) == 120 && !AudioManager.instance.isPlaying())
+                {
+                    AudioManager.instance.PlayActivateSound(2);
+                }
+
             }
         }
     }
@@ -115,18 +123,19 @@ public class MapController : MonoBehaviour
             magicCube.SetActive(true);
             AudioManager.instance.PlayActivateSound(0);
             instance.hackStatus = 1;
+            VideoManager.instance.PlayVideo(2,true);
             //GameEvents.instance.StartExperience();                          // Pass data to Cavern notifying the timer starts counting down.
         }
         else
         {
             magicCube.SetActive(false);
-            PlaneController.instance.ChangePlaneList(0);
+            PlaneController.instance.ChangePlaneList(-1);
             instance.hackStatus = 2;
 
             //GameEvents.instance.EndExperience();
             // TODO: Add audio about ending.
             
-            VideoManager.instance.PlayVideo(1);  
+            VideoManager.instance.PlayVideo(1,false);  
         }
     }
 
@@ -205,7 +214,7 @@ public class MapController : MonoBehaviour
 
         VoxonTextController.instance.SetText("");
         
-        VideoManager.instance.PlayVideo(0);
+        VideoManager.instance.PlayVideo(0,false);
 
         yield return new WaitForSeconds(17);
         
