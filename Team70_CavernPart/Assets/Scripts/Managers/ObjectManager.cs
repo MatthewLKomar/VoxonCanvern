@@ -244,7 +244,7 @@ public class ObjectManager : MonoBehaviour
         return JsonUtility.ToJson(visiblePuzzles);
     }
     
-    // networker.Send(BuildBufferPuzzleVisibile(2, 2, 1));
+    //TODO: networker.Send(BuildBufferPuzzleVisibile(2, 2, 1));
     public string BuildBufferPuzzleVisibile(int PuzzleVisible, int Puzzle1, int Puzzle2)
     {
         var payload = CreateEmptyPayload(Command.PuzzlesVisible, "Puzzle");
