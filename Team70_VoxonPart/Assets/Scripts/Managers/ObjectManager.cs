@@ -137,6 +137,20 @@ public class ObjectManager : MonoBehaviour
          * This can be entirely hard coded where you can tag parts of the cube into an array
          * Then just trigger them to be lit
          */
+        int count = visiblePuzzles.numberOfVisiblePuzzles;
+
+        PuzzleVisib.instance.TogglePuzzle(false);
+
+        if (count == 0) return;
+        else if(count == 1)
+        {
+            PuzzleVisib.instance.TogglePuzzle(visiblePuzzles.puzzleID1, true);
+        }
+        else if(count == 2)
+        {
+            PuzzleVisib.instance.TogglePuzzle(visiblePuzzles.puzzleID1, true);
+            PuzzleVisib.instance.TogglePuzzle(visiblePuzzles.puzzleID2, true);
+        }
     }
 
     void Spawn(string ObjName)

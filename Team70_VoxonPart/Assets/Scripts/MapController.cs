@@ -124,15 +124,18 @@ public class MapController : MonoBehaviour
             AudioManager.instance.PlayActivateSound(0);
             instance.hackStatus = 1;
             VideoManager.instance.PlayVideo(2,true);
-            //GameEvents.instance.StartExperience();                          // Pass data to Cavern notifying the timer starts counting down.
+            PuzzleVisib.instance.TogglePuzzle(false);
+            GameEvents.instance.StartExperience();                          // Pass data to Cavern notifying the timer starts counting down.
         }
         else
         {
             magicCube.SetActive(false);
             PlaneController.instance.ChangePlaneList(-1);
+
+            PuzzleVisib.instance.TurnOffPuzzle();
             instance.hackStatus = 2;
 
-            //GameEvents.instance.EndExperience();
+            GameEvents.instance.EndExperience();
             // TODO: Add audio about ending.
             
             VideoManager.instance.PlayVideo(1,false);  
