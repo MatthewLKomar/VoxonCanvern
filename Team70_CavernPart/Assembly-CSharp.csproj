@@ -80,6 +80,7 @@
      <Compile Include="Assets\Scripts\NetworkManagement\NetworkManager.cs" />
      <Compile Include="Assets\Scripts\NetworkManagement\TCPclient.cs" />
      <Compile Include="Assets\Scripts\NetworkManagement\TCPserver.cs" />
+     <Compile Include="Assets\Scripts\PuzzleVisibility.cs" />
      <Compile Include="Assets\Scripts\SecondDisplay.cs" />
      <Compile Include="Assets\Scripts\SteamVR_TrackedObject_Plus.cs" />
      <Compile Include="Assets\Scripts\TagTrigger.cs" />

@@ -5,11 +5,11 @@ using UnityEngine;
 public class TagTrigger : MonoBehaviour
 {
     [SerializeField] GameObject artTag;
-
+    [SerializeField] private int id;
 
     void Start()
     {
-        
+        PuzzleVisibility.instance.AddClue(id);
     }
 
     void Update()
@@ -23,6 +23,7 @@ public class TagTrigger : MonoBehaviour
         if (other.CompareTag("FlashLightT"))            // If triggered by the flashlight.
         {
             artTag.SetActive(true);
+            PuzzleVisibility.instance.ToggleClue(id,true);
         }
     }
 
@@ -32,6 +33,7 @@ public class TagTrigger : MonoBehaviour
         if (other.CompareTag("FlashLightT"))            // If the flashlight left.
         {
             artTag.SetActive(false);
+            PuzzleVisibility.instance.ToggleClue(id,false);
         }
     }
 }

@@ -136,6 +136,20 @@ public class ObjectManager : MonoBehaviour
          * This can be entirely hard coded where you can tag parts of the cube into an array
          * Then just trigger them to be lit
          */
+
+        if (visiblePuzzles.numberOfVisiblePuzzles == 0) return;
+        if (visiblePuzzles.numberOfVisiblePuzzles == 1)
+        {
+            // do something with visiblePuzzles.visiblePuzzles.puzzleID1
+            return;
+        }
+
+        if (visiblePuzzles.numberOfVisiblePuzzles == 2)
+        {
+            // do something with visiblePuzzles.visiblePuzzles.puzzleID1
+            // do something with visiblePuzzles.visiblePuzzles.puzzleID2
+            return;
+        }
     }
 
     void Spawn(string ObjName)
@@ -220,7 +234,7 @@ public class ObjectManager : MonoBehaviour
         return FormatPayload(payload);
     }
 
-    string PuzzleVisibleToJson(int PuzzleVisible, int Puzzle1, int Puzzle2)
+    string VisiblePuzzlesToJson(int PuzzleVisible, int Puzzle1, int Puzzle2)
     {
         VisiblePuzzles visiblePuzzles = new VisiblePuzzles();
         visiblePuzzles.puzzleID1 = Puzzle1;
@@ -229,12 +243,15 @@ public class ObjectManager : MonoBehaviour
 
         return JsonUtility.ToJson(visiblePuzzles);
     }
+    
+    // networker.Send(BuildBufferPuzzleVisibile(2, 2, 1));
     public string BuildBufferPuzzleVisibile(int PuzzleVisible, int Puzzle1, int Puzzle2)
     {
         var payload = CreateEmptyPayload(Command.PuzzlesVisible, "Puzzle");
-        payload.Params = PuzzleVisibleToJson(PuzzleVisible, Puzzle1, Puzzle2);
+        payload.Params = VisiblePuzzlesToJson(PuzzleVisible, Puzzle1, Puzzle2);
         return FormatPayload(payload);
     }
+    
     public string BuildBufferSpawn(Command command, GameObject obj)
     {
         var payload = CreateEmptyPayload(command, obj.name);

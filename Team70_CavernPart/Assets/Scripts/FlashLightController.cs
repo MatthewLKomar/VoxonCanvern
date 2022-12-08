@@ -19,7 +19,7 @@ public class FlashLightController : MonoBehaviour
     
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.KeypadMultiply))
         {
             CalibrateTracker();
             Debug.Log(tracker.position);

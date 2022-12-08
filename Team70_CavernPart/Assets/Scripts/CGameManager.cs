@@ -13,7 +13,8 @@ public class CGameManager : MonoBehaviour
     private int nItemCollected = 0;             // The number of item collected.
 
     [SerializeField] float timer = 300f;        // The total time of this game after started.
-    [SerializeField] TextMeshPro counterUI;
+    //[SerializeField] TextMeshPro counterUI;
+    //[SerializeField] TextMeshPro titleUI;
 
 
     
@@ -64,20 +65,24 @@ public class CGameManager : MonoBehaviour
     {            
         ComputerController.instance.SetStartPC(true);           // Enable the input computer.
 
-        counterUI.text = "Number of item collected: 0";         // Set the UI.
+       // counterUI.text = "Number of item stole: 0";         // Set the UI.
+       // titleUI.text = "Auction House hacked";
+       
+        SecondDisplay.instance.SetItemUI("Number of locks opened: 0");
 
         LightManager.instance.TurnOnLights();
 
         gameStage = 1;
         isInStage = false;
-        
     }
+    
+    
     // Start the pre game part.
     private IEnumerator GameStage0()
     {
         LightManager.instance.TurnOnLight(0);
         
-        while (!Input.GetKey(KeyCode.RightShift) /*|| !GameEvents.instance.isStart*/) //Wait until the Voxon tells the game starts, or manually press the right shift button.
+        while (!Input.GetKey(KeyCode.KeypadMinus) /*|| !GameEvents.instance.isStart*/) //Wait until the Voxon tells the game starts, or manually press the right shift button.
         {
             if (gameStage != 0) yield break; 
             yield return null;      
@@ -120,6 +125,7 @@ public class CGameManager : MonoBehaviour
     public void IncreItemCollected()            // Call by other classes to increment the number of artworks collected.
     {
         nItemCollected++;
-        counterUI.text = "Number of item collected: " + nItemCollected.ToString();
+       // counterUI.text = "Number of item stole: " + nItemCollected.ToString();
+       SecondDisplay.instance.SetItemUI("Number of locks opened: " + nItemCollected.ToString());
     }
 }

@@ -12,7 +12,7 @@ public class ComputerController : MonoBehaviour
     public bool findMatch = false;                          // If there is a match each round.
 
     [SerializeField] string currInput = "";
-    [SerializeField] TextMeshPro inputUI;
+    //[SerializeField] TextMeshPro inputUI;
 
     private Dictionary<KeyCode, int> keyDict = new Dictionary<KeyCode, int>()
     {
@@ -62,7 +62,7 @@ public class ComputerController : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) || currInput.Length > 3)
+        if (Input.GetKeyDown(KeyCode.KeypadEnter) || currInput.Length > 3)
         {
             GameEvents.instance.EveCheckPassword(currInput);
 
@@ -70,12 +70,14 @@ public class ComputerController : MonoBehaviour
 
             if (findMatch)
             {
-                inputUI.text = "Correct Password";
+                //inputUI.text = "Correct Password";
+                SecondDisplay.instance.SetPasswordUI("Correct Password");
                 AudioManager.instance.PlayInputSound(1);
             }
             else
             {
-                inputUI.text = "Wrong Password: ";
+                //inputUI.text = "Wrong Password: ";
+                SecondDisplay.instance.SetPasswordUI("Wrong Password: ");
                 AudioManager.instance.PlayInputSound(0);
             }
             findMatch = false;
@@ -88,13 +90,15 @@ public class ComputerController : MonoBehaviour
                 {
                     currInput += keyp.Value.ToString();              // Add it to the bottom.
 
-                    if (inputUI.text[0] == 'E')
+                    if (SecondDisplay.instance.GetPasswordUI()[0] == 'E')
                     {
-                        inputUI.text += keyp.Value.ToString();
+                        //inputUI.text += keyp.Value.ToString();
+                        SecondDisplay.instance.SetPasswordUI(SecondDisplay.instance.GetPasswordUI() + keyp.Value.ToString());
                     }
                     else
                     {
-                        inputUI.text = "Enter Password: " + keyp.Value.ToString();
+                        //inputUI.text = "Enter Password: " + keyp.Value.ToString();
+                        SecondDisplay.instance.SetPasswordUI("Enter Password: " + keyp.Value.ToString());
                     }
                     break;
                 }
@@ -108,11 +112,13 @@ public class ComputerController : MonoBehaviour
 
         if (newStatus)
         {
-            inputUI.text = "Enter Password: ";
+            //inputUI.text = "Enter Password: ";
+            SecondDisplay.instance.SetPasswordUI("Enter Password: ");
         }
         else
         {
-            inputUI.text = "";
+            //inputUI.text = "";
+            SecondDisplay.instance.SetPasswordUI("");
         }
     }
 
