@@ -67,20 +67,20 @@ public class MapController : MonoBehaviour
             magicCube.transform.Rotate(Vector3.left * 1.5f);
         }
 
-        if (Input.GetKey(KeyCode.A))          // Rotate the cube along z.
+        if (Input.GetKey(KeyCode.Q))          // Rotate the cube along z.
         {
             magicCube.transform.Rotate(Vector3.forward * 1.5f);
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.E))
         {
             magicCube.transform.Rotate(-Vector3.forward * 1.5f);
         }
 
-        if (Input.GetKey(KeyCode.E))          // Rotate the cube along y.
+        if (Input.GetKey(KeyCode.A))          // Rotate the cube along y.
         {
             magicCube.transform.Rotate(Vector3.up * 1.5f);
         }
-        if (Input.GetKey(KeyCode.Q))
+        if (Input.GetKey(KeyCode.D))
         {
             magicCube.transform.Rotate(-Vector3.up * 1.5f);
         }
@@ -207,10 +207,15 @@ public class MapController : MonoBehaviour
 
     private IEnumerator PlayVideo()
     {
+
+        VideoManager.instance.PlayVideo(3, true);
+
         while (!Input.GetKeyDown(KeyCode.Return))
         {
             yield return null;
         }
+
+        VideoManager.instance.StopVideo();
 
         VoxonTextController.instance.SetText("");
         
@@ -221,6 +226,8 @@ public class MapController : MonoBehaviour
         VideoManager.instance.StopVideo();
 
         VoxonTextController.instance.SetText("Password: ");
+
+        VideoManager.instance.PlayVideo(3, true);
         hackStatus = 0;
     }
 }

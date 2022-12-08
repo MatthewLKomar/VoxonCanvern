@@ -27,11 +27,10 @@ public class VideoManager : MonoBehaviour
     {
         if(videoPlane.activeSelf == false)
         {
-            videoPlane.GetComponent<VideoPlayer>().targetTexture.Release();
             videoPlane.SetActive(true);
         }
-
         VideoPlayer vp = videoPlane.GetComponent<VideoPlayer>();
+        vp.targetTexture.Release();
         if (vp.isPlaying)
         {
             vp.Stop();
